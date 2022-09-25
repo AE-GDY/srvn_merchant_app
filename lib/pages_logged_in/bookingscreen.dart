@@ -255,6 +255,77 @@ class _BookingScreenState extends State<BookingScreen> {
                                         ),
                                       );
                                     }
+                                    else if(cart[cartIndex].type == "Memberships"){
+                                      return Container(
+                                        margin: EdgeInsets.all(10),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text('Membership', style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),),
+                                            SizedBox(height: 10,),
+                                            Text(cart[cartIndex].title),
+                                            SizedBox(height: 10,),
+                                            Text('Duration', style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),),
+                                            SizedBox(height: 10,),
+                                            Text('${cart[cartIndex].duration} month/s'),
+                                            SizedBox(height: 10,),
+                                            Text('Membership Services', style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),),
+                                            SizedBox(height: 10,),
+                                            LimitedBox(
+                                              maxHeight: 300,
+                                              child: ListView.builder(
+                                                  shrinkWrap: true,
+                                                  itemCount: cart[cartIndex].membershipServices.length,
+                                                  itemBuilder: (context,index){
+                                                    return Container(
+                                                        margin:EdgeInsets.all(10),
+                                                        child: Text(cart[cartIndex].membershipServices[index])
+                                                    );
+                                                  }
+                                                  ),
+                                            ),
+
+                                            SizedBox(height: 10,),
+                                           cart[cartIndex].membershipDiscountedServices.length > 0? Text('Discounted Services', style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),):Container(),
+                                            SizedBox(height: 10,),
+                                            cart[cartIndex].membershipDiscountedServices.length > 0?Container(
+                                              width: 200,
+                                              height: 100,
+                                              child: ListView.builder(
+                                                  itemCount: cart[cartIndex].membershipDiscountedServices.length,
+                                                  itemBuilder: (context,index){
+                                                    return Container(
+                                                        margin:EdgeInsets.all(10),
+                                                        child: Text(cart[cartIndex].membershipDiscountedServices[index])
+                                                    );
+                                                  }
+                                              ),
+                                            ):Container(),
+
+                                            Text('Price', style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),),
+                                            SizedBox(height: 10,),
+                                            Text('${cart[cartIndex].price} EGP'),
+                                            Divider(),
+                                            SizedBox(height: 50,),
+                                          ],
+                                        ),
+                                      );
+                                    }
                                     else{
                                       return Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -719,6 +790,34 @@ class _BookingScreenState extends State<BookingScreen> {
                                 startTime,
                                 endTime,
                               );
+                            }
+                            else if(cart[cartIndex].type == 'Memberships'){
+
+
+                              await databaseService.addMember(
+                                  selectedCategory,
+                                  currentShopIndex,
+                                  snapshot.data['$currentShopIndex']['members-amount']+1,
+                                  cart[cartIndex].title,
+                                  currentClient,
+                                  currentClientEmail,
+                                  DateTime.now().day,
+                                  DateTime.now().month,
+                                  DateTime.now().year,
+                              );
+
+                              /*
+                              await databaseService.addUserMembership(
+                                  currentClientIndex,
+                                  snapshot.data['$currentShopIndex']['members-amount']+1,
+                                  cart[cartIndex].title,
+                                  snapshot.data['$currentShopIndex']['shop-name'],
+                                  DateTime.now().day,
+                                  DateTime.now().month,
+                                  DateTime.now().year,
+                              );
+                              */
+
                             }
                             else{
                               int productIndex = 0;

@@ -468,6 +468,72 @@ class _ActivePromotionsState extends State<ActivePromotions> {
       );
     }
     else if(selectedType == "Last Minute Promotions"){
+
+      return Center(
+        child: Container(
+          width: 500,
+          height: 500,
+          child: Card(
+            elevation: 2.0,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+
+                SizedBox(height: 10,),
+
+                Text("Coming Soon!", style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),),
+
+                SizedBox(height: 30,),
+
+                Container(
+                  margin: EdgeInsets.all(15),
+                  child: Text("Last Minute Discounts are offered at a maximum time before an appointment.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),),
+                ),
+
+
+                SizedBox(height: 10,),
+
+                Container(
+                  margin: EdgeInsets.all(15),
+                  child: Text("When business is slow "
+                      "you will be able to use Last Minute to encourage client"
+                      " bookings.",
+                    textAlign: TextAlign.center,),
+                ),
+
+                SizedBox(height: 20,),
+
+                Container(
+                  width: 300,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurple,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextButton(
+                    onPressed: (){},
+                    child: Text("Go To Dashboard", style: TextStyle(
+                      color: Colors.white,
+                    ),),
+                  ),
+                ),
+
+              ],
+            ),
+          ),
+        ),
+      );
+
+
+      /*
       int serviceIndex = 0;
       while(serviceIndex < snapshot.data['$currentShopIndex']['services-amount']){
 
@@ -555,6 +621,7 @@ class _ActivePromotionsState extends State<ActivePromotions> {
             ],
           )
       );
+      */
     }
     else{
       return Center(

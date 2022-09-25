@@ -190,172 +190,14 @@ class _AddPromotionState extends State<AddPromotion> {
               child: Column(
                 children: [
 
-                  SizedBox(height: 50,),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 200,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: selectedType == "Services"?Colors.green:Colors.grey,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: TextButton(
-                          onPressed: (){
-                            setState(() {
-                              selectedType = "Services";
-                            });
-                          },
-                          child: Text("Services", style: TextStyle(
-                            color: Colors.white,
-                          ),),
-                        ),
-                      ),
-                      SizedBox(width: 50,),
-                      Container(
-                        width: 200,
-                        height: 50,
-                        decoration: BoxDecoration(
-                          color: selectedType == "Packages"?Colors.green:Colors.grey,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: TextButton(
-                          onPressed: (){
-                            setState(() {
-                              selectedType = "Packages";
-                            });
-                          },
-                          child: Text("Packages", style: TextStyle(
-                            color: Colors.white,
-                          ),),
-                        ),
-                      ),
-                    ],
-                  ),
+                  SizedBox(height: 30,),
+
+                  Text('Promotion Type', style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),),
 
                   SizedBox(height: 10,),
-
-                  Center(
-                    child: FutureBuilder(
-                      future: categoryData(),
-                      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                        if(snapshot.connectionState == ConnectionState.done){
-                          if(snapshot.hasError){
-                            return const Text("There is an error");
-                          }
-                          else if(snapshot.hasData){
-
-                            List<String> dropDownItems = [];
-
-                            if(selectedType == "Packages"){
-                              dropDownItems.add('All Packages');
-                            }
-                            else{
-                              dropDownItems.add('All Services');
-                            }
-
-
-
-                            if(initialEdit){
-                              selectedServices.add(true);
-                            }
-
-                            int index = 0;
-
-                            if(selectedType == "Services"){
-                              while(index < snapshot.data['$currentShopIndex']['services-amount']){
-                                dropDownItems.add(snapshot.data['$currentShopIndex']['services']['$index']['service-name']);
-
-                                if(initialEdit){
-                                  selectedServices.add(false);
-                                }
-                                index++;
-                              }
-                            }
-                            else{
-                              while(index <= snapshot.data['$currentShopIndex']['packages-amount']){
-                                dropDownItems.add(snapshot.data['$currentShopIndex']['packages']['$index']['package-name']);
-                                if(initialEdit){
-                                  selectedServices.add(false);
-                                }
-                                index++;
-                              }
-                            }
-
-
-                            if(initialEdit){
-                              initialEdit = false;
-                            }
-
-                            return Container(
-                              width: 200,
-                              height: 300,
-                              child: ListView.builder(
-                                  itemCount: dropDownItems.length,
-                                  itemBuilder: (context,index){
-                                    return ListTile(
-                                      leading: Switch(
-                                        value: selectedServices[index],
-                                        onChanged: (bool value) {
-                                          setState(() {
-                                            if(index == 0){
-
-
-                                              if(selectedServices[index] == false){
-                                                int serviceIdx = 0;
-                                                while(serviceIdx < dropDownItems.length){
-                                                  selectedServices[serviceIdx] = true;
-                                                  serviceIdx++;
-                                                }
-                                              }
-                                              else{
-                                                int serviceIdx = 0;
-                                                while(serviceIdx < dropDownItems.length){
-                                                  selectedServices[serviceIdx] = false;
-                                                  serviceIdx++;
-                                                }
-                                              }
-                                            }
-                                            else{
-                                              selectedServices[0] = false;
-                                              selectedServices[index] = !selectedServices[index];
-                                            }
-
-                                            // Check if all services are selected, if they are, then automatically
-                                            // turn "all services" switch to be on
-                                            int serviceIdx = 1;
-                                            bool allActive = true;
-                                            while(serviceIdx < dropDownItems.length){
-
-                                              if(selectedServices[serviceIdx] == false){
-                                                allActive = false;
-                                                break;
-                                              }
-                                              serviceIdx++;
-                                            }
-
-                                            if(allActive){
-                                              selectedServices[0] = true;
-                                            }
-
-
-                                          });
-                                        },
-                                      ),
-                                      title: Text(dropDownItems[index]),
-                                    );
-                              })
-                            );
-                          }
-                        }
-                        return const Text("Please wait");
-                      },
-
-                    ),
-                  ),
-
-
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -422,6 +264,138 @@ class _AddPromotionState extends State<AddPromotion> {
 
                   SizedBox(height: 10,),
 
+                  selectedPromotionType != 'Flash Sale'?Container(): Text('Services Included in Promotion', style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),),
+
+                  selectedPromotionType != 'Flash Sale'?Container(): SizedBox(height: 10,),
+
+                  selectedPromotionType != 'Flash Sale'?Container(): Center(
+                    child: FutureBuilder(
+                      future: categoryData(),
+                      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                        if(snapshot.connectionState == ConnectionState.done){
+                          if(snapshot.hasError){
+                            return const Text("There is an error");
+                          }
+                          else if(snapshot.hasData){
+
+                            List<String> dropDownItems = [];
+
+                            if(selectedType == "Packages"){
+                              dropDownItems.add('All Packages');
+                            }
+                            else{
+                              dropDownItems.add('All Services');
+                            }
+
+
+
+                            if(initialEdit){
+                              selectedServices.add(true);
+                            }
+
+                            int index = 0;
+
+                            if(selectedType == "Services"){
+                              while(index < snapshot.data['$currentShopIndex']['services-amount']){
+                                dropDownItems.add(snapshot.data['$currentShopIndex']['services']['$index']['service-name']);
+
+                                if(initialEdit){
+                                  selectedServices.add(false);
+                                }
+                                index++;
+                              }
+                            }
+                            else{
+                              while(index <= snapshot.data['$currentShopIndex']['packages-amount']){
+                                dropDownItems.add(snapshot.data['$currentShopIndex']['packages']['$index']['package-name']);
+                                if(initialEdit){
+                                  selectedServices.add(false);
+                                }
+                                index++;
+                              }
+                            }
+
+
+                            if(initialEdit){
+                              initialEdit = false;
+                            }
+
+                            return Container(
+                              width: 200,
+                              height: 280,
+                              child: ListView.builder(
+                                  itemCount: dropDownItems.length,
+                                  itemBuilder: (context,index){
+                                    return ListTile(
+                                      leading: Switch(
+                                        value: selectedServices[index],
+                                        onChanged: (bool value) {
+                                          setState(() {
+                                            if(index == 0){
+
+
+                                              if(selectedServices[index] == false){
+                                                int serviceIdx = 0;
+                                                while(serviceIdx < dropDownItems.length){
+                                                  selectedServices[serviceIdx] = true;
+                                                  serviceIdx++;
+                                                }
+                                              }
+                                              else{
+                                                int serviceIdx = 0;
+                                                while(serviceIdx < dropDownItems.length){
+                                                  selectedServices[serviceIdx] = false;
+                                                  serviceIdx++;
+                                                }
+                                              }
+                                            }
+                                            else{
+                                              selectedServices[0] = false;
+                                              selectedServices[index] = !selectedServices[index];
+                                            }
+
+                                            // Check if all services are selected, if they are, then automatically
+                                            // turn "all services" switch to be on
+                                            int serviceIdx = 1;
+                                            bool allActive = true;
+                                            while(serviceIdx < dropDownItems.length){
+
+                                              if(selectedServices[serviceIdx] == false){
+                                                allActive = false;
+                                                break;
+                                              }
+                                              serviceIdx++;
+                                            }
+
+                                            if(allActive){
+                                              selectedServices[0] = true;
+                                            }
+
+
+                                          });
+                                        },
+                                      ),
+                                      title: Text(dropDownItems[index]),
+                                    );
+                              })
+                            );
+                          }
+                        }
+                        return const Text("Please wait");
+                      },
+
+                    ),
+                  ),
+
+
+
+
+
+                  SizedBox(height: 10,),
+
 
 
                   buildBody(),
@@ -434,6 +408,11 @@ class _AddPromotionState extends State<AddPromotion> {
                             return const Text("There is an error");
                           }
                           else if(snapshot.hasData){
+
+                            if(selectedPromotionType != 'Flash Sale'){
+                              return Container();
+                            }
+
                             return Center(
                               child: Container(
                                 width: 250,
@@ -594,7 +573,12 @@ class _AddPromotionState extends State<AddPromotion> {
 
             SizedBox(height: 10,),
 
-            Text("Flash Sale Discount"),
+            Text('Sale Discount', style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),),
+
+            SizedBox(height: 10,),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -646,6 +630,13 @@ class _AddPromotionState extends State<AddPromotion> {
 
             SizedBox(height: 10,),
 
+            Text('Sale Period', style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),),
+
+            SizedBox(height: 10,),
+
 
             Container(
               decoration: BoxDecoration(
@@ -682,9 +673,12 @@ class _AddPromotionState extends State<AddPromotion> {
               ),
             ),
 
-            Text("Booking date(s) to quality"),
+
             SizedBox(height: 10,),
-            Text("Start Date"),
+            Text("Start Date", style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -785,7 +779,10 @@ class _AddPromotionState extends State<AddPromotion> {
 
             SizedBox(height: 10,),
 
-            Text("End Date"),
+            Text("End Date",style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),),
 
             SizedBox(height: 10,),
 
@@ -889,6 +886,73 @@ class _AddPromotionState extends State<AddPromotion> {
       );
     }
     else if(selectedPromotionType == "Last Minute Discount"){
+
+
+      return Center(
+        child: Container(
+          width: 500,
+          height: 500,
+          child: Card(
+            elevation: 2.0,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+
+                SizedBox(height: 10,),
+
+                Text("Coming Soon!", style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),),
+
+                SizedBox(height: 30,),
+
+                Container(
+                  margin: EdgeInsets.all(15),
+                  child: Text("Last Minute Discounts are offered at a maximum time before an appointment.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),),
+                ),
+
+
+                SizedBox(height: 10,),
+
+                Container(
+                  margin: EdgeInsets.all(15),
+                  child: Text("When business is slow "
+                      "you will be able to use Last Minute to encourage client"
+                      " bookings.",
+                    textAlign: TextAlign.center,),
+                ),
+
+                SizedBox(height: 20,),
+
+                Container(
+                  width: 300,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurple,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextButton(
+                    onPressed: (){},
+                    child: Text("Go To Dashboard", style: TextStyle(
+                      color: Colors.white,
+                    ),),
+                  ),
+                ),
+
+              ],
+            ),
+          ),
+        ),
+      );
+
+
+      /*
       return Container(
         width: 400,
         height: 600,
@@ -1000,8 +1064,75 @@ class _AddPromotionState extends State<AddPromotion> {
           ],
         ),
       );
+      */
     }
     else{
+
+      return Center(
+        child: Container(
+          width: 500,
+          height: 500,
+          child: Card(
+            elevation: 2.0,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+
+                SizedBox(height: 10,),
+
+                Text("Coming Soon!", style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                ),),
+
+                SizedBox(height: 30,),
+
+                Container(
+                  margin: EdgeInsets.all(15),
+                  child: Text("Happy Hours are discounts that are offered at specific days and times.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),),
+                ),
+
+
+                SizedBox(height: 10,),
+
+                Container(
+                  margin: EdgeInsets.all(15),
+                  child: Text("When business is slow "
+                      "you will be able to use Happy Hours to encourage client"
+                      " bookings. You choose the discount along with"
+                      " which days and times you'd like it to apply to.",
+                    textAlign: TextAlign.center,),
+                ),
+
+                SizedBox(height: 20,),
+
+                Container(
+                  width: 300,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.deepPurple,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextButton(
+                    onPressed: (){},
+                    child: Text("Go To Dashboard", style: TextStyle(
+                      color: Colors.white,
+                    ),),
+                  ),
+                ),
+
+              ],
+            ),
+          ),
+        ),
+      );
+
+      /*
       return Container(
         width: 800,
         height: 900,
@@ -1215,6 +1346,7 @@ class _AddPromotionState extends State<AddPromotion> {
           ],
         ),
       );
+      */
     }
   }
 }

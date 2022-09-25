@@ -25,8 +25,17 @@ class _PosState extends State<Pos> {
     doc(selectedCategory).get()).data();
   }
 
+  Future<Map<String, dynamic>?> userData() async {
+    return (await FirebaseFirestore.instance.collection('users').
+    doc("signed-up").get()).data();
+  }
+
 
   bool initialEdit = true;
+
+  bool isMember = false;
+  String currentMembership = '';
+
 
   DatabaseService databaseService = DatabaseService();
 
@@ -35,6 +44,7 @@ class _PosState extends State<Pos> {
 
   bool selectingClient = false;
   bool showClientNotSelected = false;
+  bool showIsAlreadyMember = false;
 
 
 
@@ -355,6 +365,7 @@ class _PosState extends State<Pos> {
                                   onPressed: (){
                                     setState(() {
                                       showClientNotSelected = false;
+                                      showIsAlreadyMember = false;
                                       selectedType = "New Sale";
                                     });
                                   },
@@ -381,6 +392,7 @@ class _PosState extends State<Pos> {
                                   onPressed: (){
                                     setState(() {
                                       showClientNotSelected = false;
+                                      showIsAlreadyMember = false;
                                       selectedType = "Transactions";
                                     });
                                   },
@@ -407,6 +419,7 @@ class _PosState extends State<Pos> {
                                   onPressed: (){
                                     setState(() {
                                       showClientNotSelected = false;
+                                      showIsAlreadyMember = false;
                                       selectedType = "Invoices";
                                     });
                                   },
@@ -455,6 +468,7 @@ class _PosState extends State<Pos> {
                                               setState(() {
                                                 selectingClient = false;
                                                 showClientNotSelected = false;
+                                                showIsAlreadyMember = false;
                                                 selectedInPos = "Quick Sale";
                                               });
                                             },
@@ -466,6 +480,7 @@ class _PosState extends State<Pos> {
                                             onTap: (){
                                               setState(() {
                                                 showClientNotSelected = false;
+                                                showIsAlreadyMember = false;
                                                 selectedInPos = "Clients";
                                               });
                                             },
@@ -478,6 +493,7 @@ class _PosState extends State<Pos> {
                                               setState(() {
                                                 selectingClient = false;
                                                 showClientNotSelected = false;
+                                                showIsAlreadyMember = false;
                                                 selectedInPos = "To Be Completed";
                                               });
                                             },
@@ -490,6 +506,7 @@ class _PosState extends State<Pos> {
                                               setState(() {
                                                 selectingClient = false;
                                                 showClientNotSelected = false;
+                                                showIsAlreadyMember = false;
                                                 selectedInPos = "Services";
                                               });
                                             },
@@ -502,6 +519,7 @@ class _PosState extends State<Pos> {
                                               setState(() {
                                                 selectingClient = false;
                                                 showClientNotSelected = false;
+                                                showIsAlreadyMember = false;
                                                 selectedInPos = "Products";
                                               });
                                             },
@@ -514,6 +532,7 @@ class _PosState extends State<Pos> {
                                               setState(() {
                                                 selectingClient = false;
                                                 showClientNotSelected = false;
+                                                showIsAlreadyMember = false;
                                                 selectedInPos = "Custom Amount";
                                               });
                                             },
@@ -526,6 +545,7 @@ class _PosState extends State<Pos> {
                                               setState(() {
                                                 selectingClient = false;
                                                 showClientNotSelected = false;
+                                                showIsAlreadyMember = false;
                                                 selectedInPos = "Gift Cards";
                                               });
                                             },
@@ -551,6 +571,7 @@ class _PosState extends State<Pos> {
                                               setState(() {
                                                 selectingClient = false;
                                                 showClientNotSelected = false;
+                                                showIsAlreadyMember = false;
                                                 selectedInPos = "Memberships";
                                               });
                                             },
@@ -613,8 +634,30 @@ class _PosState extends State<Pos> {
                                     child: TextButton(
                                       onPressed: (){
                                         if(currentClient != ''){
-                                          showClientNotSelected = false;
-                                          Navigator.pushNamed(context, '/booking-screen');
+
+                                          setState(() {
+                                            showClientNotSelected = false;
+
+                                            print('isMember: $isMember');
+
+                                            if(isMember){
+                                              print('IS A MEMBER');
+                                              int cartIndex = 0;
+                                              while(cartIndex < cart.length){
+
+                                                if(cart[cartIndex].type == 'Memberships'){
+                                                  showIsAlreadyMember = true;
+                                                  break;
+                                                }
+
+                                                cartIndex++;
+                                              }
+                                            }
+                                          });
+
+                                          if(!showIsAlreadyMember){
+                                            Navigator.pushNamed(context, '/booking-screen');
+                                          }
                                         }
                                         else{
                                           setState(() {
@@ -685,6 +728,33 @@ class _PosState extends State<Pos> {
         ),
       );
     }
+    else if(showIsAlreadyMember){
+      return Center(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          width: 260,
+          height: 85,
+          child: Column(
+            children: [
+              Text("This client is already a member", style: TextStyle(
+                color: Colors.red,
+              ),
+              textAlign: TextAlign.center,),
+              Text("Please select another client",style: TextStyle(
+                color: Colors.red,
+              ),
+                textAlign: TextAlign.center,),
+              Text("Or remove membership from the cart",style: TextStyle(
+                color: Colors.red,
+              ),
+                textAlign: TextAlign.center,),
+            ],
+          ),
+        ),
+      );
+    }
     else{
       return Container(
           height: 200,
@@ -705,14 +775,18 @@ class _PosState extends State<Pos> {
                             fontSize: 17,
                           ),):cart[index].type == 'Packages'?Text("Package: ${cart[index].title}",style: TextStyle(
                             fontSize: 17,
-                          ),):Text("Product: ${cart[index].title}",style: TextStyle(
+                          ),):cart[index].type == 'Memberships'? Text("Membership: ${cart[index].title}",style: TextStyle(
+                          fontSize: 17,
+                          ),):
+                          Text("Product: ${cart[index].title}",style: TextStyle(
                             fontSize: 17,
                           ),),
                           SizedBox(height: 5,),
                           cart[index].type == 'Products'? Text('Quantity: ${productAmountInCart[cart[index].title]}'):Container(),
                           cart[index].type == 'Services'? Text("Duration: ${cart[index].duration}")
                               :cart[index].type == 'Packages'?Text("Duration: ${cart[index].duration}",style: TextStyle(
-                          ),):Container(),
+                          ),):Text("Duration: ${cart[index].duration} month/s",style: TextStyle(
+                          ),),
                           SizedBox(height: 5,),
                           Text("Price: ${cart[index].price} EGP"),
                           SizedBox(height: 10,),
@@ -753,567 +827,283 @@ class _PosState extends State<Pos> {
 
   Widget buildBody(AsyncSnapshot<dynamic> snapshot){
     if(selectedInPos == "Quick Sale"){
-      if(!selectingClient){
-        return  Positioned(
-          top: 50,
-          left: 200,
-          child: Container(
-            width: 300,
-            height: 400,
-            child: Column(
-              children: [
-                Text("Popular items", style: TextStyle(
-                  color: Colors.grey,
-                ),),
-              ],
-            ),
+      return  Positioned(
+        top: 50,
+        left: 200,
+        child: Container(
+          width: 300,
+          height: 400,
+          child: Column(
+            children: [
+              Text("Popular items", style: TextStyle(
+                color: Colors.grey,
+              ),),
+            ],
           ),
-        );
-      }
-      else{
-        return Positioned(
-          top: 50,
-          left: 260,
-          child: Container(
-            width: 450,
-            height: 420,
-            child: FutureBuilder(
-              future: categoryData(),
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if(snapshot.connectionState == ConnectionState.done){
-                  if(snapshot.hasError){
-                    return const Text("There is an error");
-                  }
-                  else if(snapshot.hasData){
-
-                    shopClients = [];
-                    int clientIndex = 0;
-                    while(clientIndex <= snapshot.data['$currentShopIndex']['client-amount']){
-                      shopClients.add(snapshot.data['$currentShopIndex']['clients']['$clientIndex']['name']);
-                      clientIndex++;
-                    }
-
-                    print("CLIENT AMOUNT ${shopClients.length}");
-
-
-                    if(shopClients.length > 0){
-                      return Column(
-                        children: [
-                          Center(
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text("Search for clients"),
-                            ),
-                          ),
-                          Expanded(
-                            child: ListView.builder(
-                                itemCount: shopClients.length,
-                                itemBuilder: (context,index){
-                                  return Container(
-                                    margin: EdgeInsets.all(10),
-                                    child: ListTile(
-                                      onTap: (){
-                                        setState(() {
-                                          showClientNotSelected = false;
-                                          selectingClient = false;
-                                          currentClient = shopClients[index];
-                                        });
-                                      },
-                                      leading: VerticalDivider(color: Colors.blue,
-                                        thickness: 2,),
-                                      title: Text(shopClients[index]),
-                                    ),
-                                  );
-                                }),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 150,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-client');
-                                },
-                                child: Text("Add new Client", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    else{
-                      return Column(
-                        children: [
-                          Center(
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text("Client list empty"),
-                            ),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 150,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-client');
-                                },
-                                child: Text("Add new Client", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                  }
-                }
-                return const Text("Please wait");
-              },
-
-            ),
-          ),
-        );
-      }
+        ),
+      );
     }
     else if(selectedInPos == "To Be Completed"){
-      if(!selectingClient){
-        return Positioned(
-          top: 50,
-          left: 270,
-          child: Container(
-            width: 420,
-            height: 400,
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(Icons.search),
-                  title: Text("Search for appointment"),
-                ),
-                SizedBox(height: 20,),
-                Expanded(
-                  child: ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      physics: ScrollPhysics(),
-                      itemCount: snapshot.data['$currentShopIndex']['appointments']['appointment-amount'] + 1,
-                      itemBuilder: (context,index){
-                        if(snapshot.data['$currentShopIndex']['appointments']['$index']['appointment-status'] != 'incomplete'){
-                          return Container();
-                        }
-                        else{
-                          return Container(
-                            height: 200,
-                            margin: EdgeInsets.all(10),
-                            child: Card(
-                              elevation: 3.0,
-                              child: Row(
-                                children: [
-                                  VerticalDivider(color: Colors.blue,
-                                    thickness: 2,),
-                                  SizedBox(width: 10,),
-                                  Column(
-                                    children: [
-                                      Text("Client Name", style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 17
-                                      ),),
-                                      SizedBox(height: 5,),
-                                      Text("${snapshot.data['$currentShopIndex']['appointments']['$index']['client-name']}"),
-                                      SizedBox(height: 10,),
-                                      Text("Service Provider", style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 17
-                                      ),),
-                                      SizedBox(height: 5,),
-                                      Text("${snapshot.data['$currentShopIndex']['appointments']['$index']['member-name']}"),
-                                      SizedBox(height: 10,),
-                                      Text("Service Name", style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 17
-                                      ),),
-                                      Text(" ${snapshot.data['$currentShopIndex']['appointments']['$index']['service-name']}"),
-
-                                    ],
-                                  ),
-                                  SizedBox(width: 100,),
-                                  Column(
-                                    children: [
-                                      SizedBox(height: 40,),
-                                      Text("${snapshot.data['$currentShopIndex']['appointments']['$index']['service-price']} EGP",style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
-                                      ),),
-                                      SizedBox(height: 20,),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.green,
-                                          borderRadius: BorderRadius.circular(10),
-                                        ),
-                                        child: TextButton(
-                                          onPressed: (){
-                                            setState(() {
-                                              currentTransactionIndex = index;
-                                            });
-
-                                            Navigator.pushNamed(context, '/complete-transaction');
-                                          },
-                                          child: Text("Complete", style: TextStyle(
-                                            color: Colors.white,
-                                          ),),
-                                        ),
-                                      ),
-                                      SizedBox(height: 10,),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.red,
-                                          borderRadius: BorderRadius.circular(10),
-                                        ),
-                                        child: TextButton(
-                                          onPressed: (){
-                                            setState(() {
-                                              currentTransactionIndex = index;
-                                            });
-                                            Navigator.pushNamed(context, '/complete-cancellation');
-                                          },
-                                          child: Text("Cancel", style: TextStyle(
-                                            color: Colors.white,
-                                          ),),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-                      }),
-                ),
-              ],
-            ),
-          ),
-        );
-      }
-      else{
-        return Positioned(
-          top: 50,
-          left: 260,
-          child: Container(
-            width: 450,
-            height: 420,
-            child: FutureBuilder(
-              future: categoryData(),
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if(snapshot.connectionState == ConnectionState.done){
-                  if(snapshot.hasError){
-                    return const Text("There is an error");
-                  }
-                  else if(snapshot.hasData){
-
-                    shopClients = [];
-                    int clientIndex = 0;
-                    while(clientIndex <= snapshot.data['$currentShopIndex']['client-amount']){
-                      shopClients.add(snapshot.data['$currentShopIndex']['clients']['$clientIndex']['name']);
-                      clientIndex++;
-                    }
-
-                    print("CLIENT AMOUNT ${shopClients.length}");
-
-
-                    if(shopClients.length > 0){
-                      return Column(
-                        children: [
-                          Center(
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text("Search for clients"),
-                            ),
-                          ),
-                          Expanded(
-                            child: ListView.builder(
-                                itemCount: shopClients.length,
-                                itemBuilder: (context,index){
-                                  return Container(
-                                    margin: EdgeInsets.all(10),
-                                    child: ListTile(
-                                      onTap: (){
-                                        setState(() {
-                                          showClientNotSelected = false;
-                                          selectingClient = false;
-                                          currentClient = shopClients[index];
-                                        });
-                                      },
-                                      leading: VerticalDivider(color: Colors.blue,
-                                        thickness: 2,),
-                                      title: Text(shopClients[index]),
-                                    ),
-                                  );
-                                }),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 150,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-client');
-                                },
-                                child: Text("Add new Client", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    else{
-                      return Column(
-                        children: [
-                          Center(
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text("Client list empty"),
-                            ),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 150,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-client');
-                                },
-                                child: Text("Add new Client", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                  }
-                }
-                return const Text("Please wait");
-              },
-
-            ),
-          ),
-        );
-      }
-    }
-    else if(selectedInPos == "Services"){
-      if(!selectingClient){
-        return Positioned(
-          top: 50,
-          left: 250,
-          child: Container(
-            width: 450,
-            height: 400,
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(Icons.search),
-                  title: Text("Search for services"),
-                ),
-                SizedBox(height: 20,),
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: snapshot.data['$currentShopIndex']['services-amount'],
-                      itemBuilder: (context,index){
+      return Positioned(
+        top: 50,
+        left: 270,
+        child: Container(
+          width: 420,
+          height: 400,
+          child: Column(
+            children: [
+              ListTile(
+                leading: Icon(Icons.search),
+                title: Text("Search for appointment"),
+              ),
+              SizedBox(height: 20,),
+              Expanded(
+                child: ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    physics: ScrollPhysics(),
+                    itemCount: snapshot.data['$currentShopIndex']['appointments']['appointment-amount'] + 1,
+                    itemBuilder: (context,index){
+                      if(snapshot.data['$currentShopIndex']['appointments']['$index']['appointment-status'] != 'incomplete'){
+                        return Container();
+                      }
+                      else{
                         return Container(
+                          height: 200,
                           margin: EdgeInsets.all(10),
-                          child: ListTile(
-                            onTap: (){
-                              setState(() {
-                                serviceBooked.add(snapshot.data['$currentShopIndex']['services']['$index']['service-name']);
-                                serviceDuration.add(snapshot.data['$currentShopIndex']['services']['$index']['service-hours'] +
-                                    snapshot.data['$currentShopIndex']['services']['$index']['service-minutes']);
-                                servicePrice.add(snapshot.data['$currentShopIndex']['services']['$index']['service-price']);
-
-                                ServiceToBook currentService = ServiceToBook(
-                                  serviceIndex: index,
-                                  title: snapshot.data['$currentShopIndex']['services']['$index']['service-name'],
-                                  duration: snapshot.data['$currentShopIndex']['services']['$index']['service-hours'] +
-                                      snapshot.data['$currentShopIndex']['services']['$index']['service-minutes'],
-                                  price: snapshot.data['$currentShopIndex']['services']['$index']['service-price'],
-                                  type: 'Services',
-                                  serviceLinked: snapshot.data['$currentShopIndex']['services']['$index']['service-linked'],
-                                );
-
-                                currentTotal += double.parse(snapshot.data['$currentShopIndex']['services']['$index']['service-price']);
-                                cart.add(currentService);
-
-                              });
-                            },
-                            leading: VerticalDivider(color: Colors.blue,
-                              thickness: 2,),
-                            title:  Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Card(
+                            elevation: 3.0,
+                            child: Row(
                               children: [
-                                Text(snapshot.data['$currentShopIndex']['services']['$index']['service-name'],style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),),
-                                SizedBox(height: 5,),
-                                Row(
+                                VerticalDivider(color: Colors.blue,
+                                  thickness: 2,),
+                                SizedBox(width: 10,),
+                                Column(
                                   children: [
-                                    Text(snapshot.data['$currentShopIndex']['services']['$index']['service-hours'],style: TextStyle(
-                                      fontSize: 12,
+                                    Text("Client Name", style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17
                                     ),),
-                                    SizedBox(width: 5,),
-                                    Text(snapshot.data['$currentShopIndex']['services']['$index']['service-minutes'],style: TextStyle(
-                                      fontSize: 13,
+                                    SizedBox(height: 5,),
+                                    Text("${snapshot.data['$currentShopIndex']['appointments']['$index']['client-name']}"),
+                                    SizedBox(height: 10,),
+                                    Text("Service Provider", style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17
                                     ),),
+                                    SizedBox(height: 5,),
+                                    Text("${snapshot.data['$currentShopIndex']['appointments']['$index']['member-name']}"),
+                                    SizedBox(height: 10,),
+                                    Text("Service Name", style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 17
+                                    ),),
+                                    Text(" ${snapshot.data['$currentShopIndex']['appointments']['$index']['service-name']}"),
+
+                                  ],
+                                ),
+                                SizedBox(width: 100,),
+                                Column(
+                                  children: [
+                                    SizedBox(height: 40,),
+                                    Text("${snapshot.data['$currentShopIndex']['appointments']['$index']['service-price']} EGP",style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),),
+                                    SizedBox(height: 20,),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.green,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: TextButton(
+                                        onPressed: (){
+                                          setState(() {
+                                            currentTransactionIndex = index;
+                                          });
+
+                                          Navigator.pushNamed(context, '/complete-transaction');
+                                        },
+                                        child: Text("Complete", style: TextStyle(
+                                          color: Colors.white,
+                                        ),),
+                                      ),
+                                    ),
+                                    SizedBox(height: 10,),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.red,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: TextButton(
+                                        onPressed: (){
+                                          setState(() {
+                                            currentTransactionIndex = index;
+                                          });
+                                          Navigator.pushNamed(context, '/complete-cancellation');
+                                        },
+                                        child: Text("Cancel", style: TextStyle(
+                                          color: Colors.white,
+                                        ),),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ],
                             ),
-                            trailing: Text("${snapshot.data['$currentShopIndex']['services']['$index']['service-price']} EGP"),
                           ),
                         );
-                      }),
-                ),
-              ],
-            ),
+                      }
+                    }),
+              ),
+            ],
           ),
-        );
-      }
-      else{
-        return Positioned(
-          top: 50,
-          left: 260,
-          child: Container(
-            width: 450,
-            height: 420,
-            child: FutureBuilder(
-              future: categoryData(),
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if(snapshot.connectionState == ConnectionState.done){
-                  if(snapshot.hasError){
-                    return const Text("There is an error");
-                  }
-                  else if(snapshot.hasData){
-
-                    shopClients = [];
-                    int clientIndex = 0;
-                    while(clientIndex <= snapshot.data['$currentShopIndex']['client-amount']){
-                      shopClients.add(snapshot.data['$currentShopIndex']['clients']['$clientIndex']['name']);
-                      clientIndex++;
-                    }
-
-                    print("CLIENT AMOUNT ${shopClients.length}");
+        ),
+      );
+    }
+    else if(selectedInPos == "Services"){
 
 
-                    if(shopClients.length > 0){
-                      return Column(
-                        children: [
-                          Center(
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text("Search for clients"),
-                            ),
-                          ),
-                          Expanded(
-                            child: ListView.builder(
-                                itemCount: shopClients.length,
-                                itemBuilder: (context,index){
-                                  return Container(
-                                    margin: EdgeInsets.all(10),
-                                    child: ListTile(
-                                      onTap: (){
-                                        setState(() {
-                                          showClientNotSelected = false;
-                                          selectingClient = false;
-                                          currentClient = shopClients[index];
-                                        });
-                                      },
-                                      leading: VerticalDivider(color: Colors.blue,
-                                        thickness: 2,),
-                                      title: Text(shopClients[index]),
-                                    ),
-                                  );
-                                }),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 150,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20),
+
+      return Positioned(
+        top: 50,
+        left: 250,
+        child: Container(
+          width: 450,
+          height: 400,
+          child: Column(
+            children: [
+              ListTile(
+                leading: Icon(Icons.search),
+                title: Text("Search for services"),
+              ),
+              SizedBox(height: 20,),
+              Expanded(
+                child: ListView.builder(
+                    itemCount: snapshot.data['$currentShopIndex']['services-amount'],
+                    itemBuilder: (context,index){
+                      return Container(
+                        margin: EdgeInsets.all(10),
+                        child: ListTile(
+                          onTap: (){
+                            setState(() {
+                              serviceBooked.add(snapshot.data['$currentShopIndex']['services']['$index']['service-name']);
+                              serviceDuration.add(snapshot.data['$currentShopIndex']['services']['$index']['service-hours'] +
+                                  snapshot.data['$currentShopIndex']['services']['$index']['service-minutes']);
+
+
+                              bool foundService = false;
+                              bool foundDiscounted = false;
+                              String newPrice = '';
+                              if(isMember){
+
+                                int membershipIndex = 0;
+                                while(membershipIndex <= snapshot.data['$currentShopIndex']['memberships-amount']){
+
+                                  if(currentMembership == snapshot.data['$currentShopIndex']['memberships']['$membershipIndex']['name']){
+
+                                    int membershipServicesIndex = 0;
+                                    while(membershipServicesIndex < snapshot.data['$currentShopIndex']['memberships']['$membershipIndex']['selected-services-amount']){
+
+                                      if(snapshot.data['$currentShopIndex']['services']['$index']['service-name'] ==
+                                          snapshot.data['$currentShopIndex']['memberships']['$membershipIndex']['selected-services'][membershipServicesIndex]){
+                                        servicePrice.add('0');
+                                        foundService = true;
+                                        break;
+                                      }
+
+                                      membershipServicesIndex++;
+                                    }
+
+                                    int discountedIndex = 0;
+
+                                    while(discountedIndex < snapshot.data['$currentShopIndex']['memberships']['$membershipIndex']['discounted-amount']){
+
+                                      if(snapshot.data['$currentShopIndex']['services']['$index']['service-name'] ==
+                                          snapshot.data['$currentShopIndex']['memberships']['$membershipIndex']['selected-discounted-services'][discountedIndex]){
+
+                                        int currentServicePrice = int.parse(snapshot.data['$currentShopIndex']['services']['$index']['service-price']);
+                                        int discount = snapshot.data['$currentShopIndex']['memberships']['$membershipIndex']['selected-discounted-services-percentages'][discountedIndex];
+
+                                        double discountedPrice = currentServicePrice - (currentServicePrice * (discount/100));
+
+
+                                        newPrice = '${discountedPrice.round()}';
+
+                                        servicePrice.add(newPrice);
+                                        foundDiscounted = true;
+                                        break;
+                                      }
+
+                                      discountedIndex++;
+                                    }
+
+
+                                    if(!foundService && !foundDiscounted){
+                                      servicePrice.add(snapshot.data['$currentShopIndex']['services']['$index']['service-price']);
+                                    }
+
+                                    break;
+
+                                  }
+
+                                  membershipIndex++;
+                                }
+
+                              }
+                              else{
+                                servicePrice.add(snapshot.data['$currentShopIndex']['services']['$index']['service-price']);
+                              }
+
+
+                              ServiceToBook currentService = ServiceToBook(
+                                serviceIndex: index,
+                                title: snapshot.data['$currentShopIndex']['services']['$index']['service-name'],
+                                duration: snapshot.data['$currentShopIndex']['services']['$index']['service-hours'] +
+                                    snapshot.data['$currentShopIndex']['services']['$index']['service-minutes'],
+                                price: foundService?'0':foundDiscounted?newPrice:snapshot.data['$currentShopIndex']['services']['$index']['service-price'],
+                                type: 'Services',
+                                serviceLinked: snapshot.data['$currentShopIndex']['services']['$index']['service-linked'],
+                                membershipServices: [],
+                                membershipDiscountedServices: [],
+                              );
+
+                              currentTotal += double.parse(snapshot.data['$currentShopIndex']['services']['$index']['service-price']);
+                              cart.add(currentService);
+
+                            });
+                          },
+                          leading: VerticalDivider(color: Colors.blue,
+                            thickness: 2,),
+                          title:  Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(snapshot.data['$currentShopIndex']['services']['$index']['service-name'],style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),),
+                              SizedBox(height: 5,),
+                              Row(
+                                children: [
+                                  Text(snapshot.data['$currentShopIndex']['services']['$index']['service-hours'],style: TextStyle(
+                                    fontSize: 12,
+                                  ),),
+                                  SizedBox(width: 5,),
+                                  Text(snapshot.data['$currentShopIndex']['services']['$index']['service-minutes'],style: TextStyle(
+                                    fontSize: 13,
+                                  ),),
+                                ],
                               ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-client');
-                                },
-                                child: Text("Add new Client", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ),
+                            ],
                           ),
-                        ],
+                          trailing: Text("${snapshot.data['$currentShopIndex']['services']['$index']['service-price']} EGP"),
+                        ),
                       );
-                    }
-                    else{
-                      return Column(
-                        children: [
-                          Center(
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text("Client list empty"),
-                            ),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 150,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-client');
-                                },
-                                child: Text("Add new Client", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                  }
-                }
-                return const Text("Please wait");
-              },
-
-            ),
+                    }),
+              ),
+            ],
           ),
-        );
-      }
+        ),
+      );
+
     }
     else if(selectedInPos == 'Clients'){
       return Positioned(
@@ -1332,11 +1122,18 @@ class _PosState extends State<Pos> {
                 else if(snapshot.hasData){
 
                   shopClients = [];
+                  shopClientsEmails = [];
+
                   int clientIndex = 0;
+                  print('0p');
                   while(clientIndex <= snapshot.data['$currentShopIndex']['client-amount']){
+
                     shopClients.add(snapshot.data['$currentShopIndex']['clients']['$clientIndex']['name']);
+                    shopClientsEmails.add(snapshot.data['$currentShopIndex']['clients']['$clientIndex']['email']);
                     clientIndex++;
                   }
+
+                  print('6p');
 
                   print("CLIENT AMOUNT ${shopClients.length}");
 
@@ -1361,8 +1158,151 @@ class _PosState extends State<Pos> {
                                       setState(() {
                                         showClientNotSelected = false;
                                         selectingClient = false;
+
+                                        print('1w');
                                         currentClient = shopClients[index];
-                                      });
+                                        print('2w');
+
+                                        currentClientEmail = shopClientsEmails[index];
+                                        print('3w');
+
+                                     //   currentClientIndex = clientsDatabaseIndexes[index];
+
+
+                                        print('current client email: $currentClientEmail');
+
+                                        int memberIndex = 0;
+                                        bool memberFound = false;
+
+                                        while(memberIndex <= snapshot.data['$currentShopIndex']['members-amount']){
+                                          print('IN HERE 101');
+                                          if(currentClientEmail == snapshot.data['$currentShopIndex']['members']['$memberIndex']['email']){
+                                            memberFound = true;
+                                            print('IN HERE 102');
+                                            currentMembership = snapshot.data['$currentShopIndex']['members']['$memberIndex']['membership-type'];
+                                            break;
+                                          }
+
+                                          memberIndex++;
+                                        }
+
+                                        if(memberFound){
+                                          isMember = true;
+
+                                          print('MEMBER FOUND');
+
+                                          int cartIndex = 0;
+                                          while(cartIndex < cart.length){
+
+
+                                            if(cart[cartIndex].type == 'Services'){
+
+
+                                              int membershipIndex = 0;
+                                              while(membershipIndex <= snapshot.data['$currentShopIndex']['memberships-amount']){
+                                                bool foundService = false;
+                                                bool foundDiscounted = false;
+                                                String newPrice = '';
+                                                if(currentMembership == snapshot.data['$currentShopIndex']['memberships']['$membershipIndex']['name']){
+
+                                                  print('HERE 1');
+
+                                                  int membershipServicesIndex = 0;
+                                                  while(membershipServicesIndex < snapshot.data['$currentShopIndex']['memberships']['$membershipIndex']['selected-services-amount']){
+
+                                                    if(cart[cartIndex].title == snapshot.data['$currentShopIndex']['memberships']['$membershipIndex']['selected-services'][membershipServicesIndex]){
+                                                      servicePrice[cartIndex] = '0';
+                                                      cart[cartIndex].price = '0';
+                                                      print('HERE 2');
+                                                      foundService = true;
+                                                      break;
+                                                    }
+
+                                                    membershipServicesIndex++;
+                                                  }
+
+                                                  int discountedIndex = 0;
+
+                                                  while(discountedIndex < snapshot.data['$currentShopIndex']['memberships']['$membershipIndex']['discounted-amount']){
+
+                                                    if(cart[cartIndex].title == snapshot.data['$currentShopIndex']['memberships']['$membershipIndex']['selected-discounted-services'][discountedIndex]){
+
+                                                      int currentServicePrice = int.parse(cart[cartIndex].price);
+                                                      int discount = snapshot.data['$currentShopIndex']['memberships']['$membershipIndex']['selected-discounted-services-percentages'][discountedIndex];
+
+                                                      double discountedPrice = currentServicePrice - (currentServicePrice * (discount/100));
+
+
+                                                      newPrice = '${discountedPrice.round()}';
+
+                                                      servicePrice[cartIndex] = newPrice;
+                                                      cart[cartIndex].price = newPrice;
+                                                      foundDiscounted = true;
+                                                      break;
+                                                    }
+
+                                                    discountedIndex++;
+                                                  }
+
+
+                                                  if(!foundService && !foundDiscounted){
+                                                    servicePrice[cartIndex] = cart[cartIndex].price;
+                                                  }
+
+                                                  break;
+
+                                                }
+
+                                                membershipIndex++;
+                                              }
+
+
+                                            }
+
+                                            cartIndex++;
+                                          }
+
+
+                                        }
+                                        else{
+                                          isMember = false;
+
+                                          print('MEMBER NOT FOUND');
+
+
+                                          int cartIndex = 0;
+                                          while(cartIndex < cart.length){
+
+                                            if(cart[cartIndex].type == 'Services'){
+
+                                              int serviceIndex = 0;
+                                              print('0we');
+
+                                              while(serviceIndex < snapshot.data['$currentShopIndex']['services-amount']){
+
+                                                if(cart[cartIndex].title == snapshot.data['$currentShopIndex']['services']['$serviceIndex']['service-name']){
+                                                  print('1we');
+                                                  servicePrice[cartIndex] = snapshot.data['$currentShopIndex']['services']['$serviceIndex']['service-price'];
+                                                  print('2we');
+
+                                                  cart[cartIndex].price = snapshot.data['$currentShopIndex']['services']['$serviceIndex']['service-price'];
+                                                  print('3we');
+
+
+                                                  break;
+                                                }
+
+                                                serviceIndex++;
+                                              }
+
+                                            }
+
+                                            cartIndex++;
+                                          }
+
+                                        }
+
+                                    });
                                     },
                                     leading: VerticalDivider(color: Colors.blue,
                                       thickness: 2,),
@@ -1432,686 +1372,336 @@ class _PosState extends State<Pos> {
       );
     }
     else if(selectedInPos == "Products"){
-      if(!selectingClient){
-        return Positioned(
-          top: 50,
-          left: 270,
-          child: Container(
-            width: 400,
-            height: 400,
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(Icons.search),
-                  title: Text("Search for products"),
-                ),
-                SizedBox(height: 20,),
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: (snapshot.data['$currentShopIndex']['products-amount'] == -1)?1:snapshot.data['$currentShopIndex']['products-amount']+1,
-                      itemBuilder: (context,index){
-                        if(snapshot.data['$currentShopIndex']['products-amount'] == -1){
-                          return Column(
-                            children: [
-                              SizedBox(height: 50,),
-                              Text("You have no products",style: TextStyle(
-                                fontSize: 18,
-                              ),),
-                            ],
-                          );
-                        }
-                        else{
-                          return Container(
-                            margin: EdgeInsets.all(10),
-                            child: ListTile(
-                              onTap: (){
-                                setState(() {
-                                  serviceBooked.add(snapshot.data['$currentShopIndex']['products']['$index']['product-name']);
-                                  serviceDuration.add('');
-                                  servicePrice.add('${snapshot.data['$currentShopIndex']['products']['$index']['product-price']}');
-
-                                  ServiceToBook currentService = ServiceToBook(
-                                    serviceIndex: index,
-                                    title: snapshot.data['$currentShopIndex']['products']['$index']['product-name'],
-                                    duration: '',
-                                    price: '${snapshot.data['$currentShopIndex']['products']['$index']['product-price']}',
-                                    type: 'Products',
-                                    serviceLinked: false,
-                                  );
-
-
-
-                                  currentTotal += double.parse('${snapshot.data['$currentShopIndex']['products']['$index']['product-price']}');
-
-
-                                  if(productAmountInCart[snapshot.data['$currentShopIndex']['products']['$index']['product-name']] == 0){
-                                    cart.add(currentService);
-                                  }
-
-                                  productAmountInCart[snapshot.data['$currentShopIndex']['products']['$index']['product-name']] += 1;
-
-                                });
-                              },
-                              leading: VerticalDivider(color: Colors.blue,
-                                thickness: 2,),
-                              title: Row(
-                                children: [
-                                  Text(snapshot.data['$currentShopIndex']['products']['$index']['product-name']),
-                                ],
-                              ),
-                              trailing: Text("${snapshot.data['$currentShopIndex']['products']['$index']['product-price']} EGP"),
-                            ),
-                          );
-                        }
-                      }),
-                ),
-                Container(
-                  width: 150,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: TextButton(
-                    onPressed: (){
-                      Navigator.pushNamed(context, '/add-product');
-                    },
-                    child: Text("Add New Product", style: TextStyle(
-                      color: Colors.white,
-                    ),),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }
-      else{
-        return Positioned(
-          top: 50,
-          left: 260,
-          child: Container(
-            width: 450,
-            height: 420,
-            child: FutureBuilder(
-              future: categoryData(),
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if(snapshot.connectionState == ConnectionState.done){
-                  if(snapshot.hasError){
-                    return const Text("There is an error");
-                  }
-                  else if(snapshot.hasData){
-
-                    shopClients = [];
-                    int clientIndex = 0;
-                    while(clientIndex <= snapshot.data['$currentShopIndex']['client-amount']){
-                      shopClients.add(snapshot.data['$currentShopIndex']['clients']['$clientIndex']['name']);
-                      clientIndex++;
-                    }
-
-                    print("CLIENT AMOUNT ${shopClients.length}");
-
-
-                    if(shopClients.length > 0){
-                      return Column(
-                        children: [
-                          Center(
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text("Search for clients"),
-                            ),
-                          ),
-                          Expanded(
-                            child: ListView.builder(
-                                itemCount: shopClients.length,
-                                itemBuilder: (context,index){
-                                  return Container(
-                                    margin: EdgeInsets.all(10),
-                                    child: ListTile(
-                                      onTap: (){
-                                        setState(() {
-                                          showClientNotSelected = false;
-                                          selectingClient = false;
-                                          currentClient = shopClients[index];
-                                        });
-                                      },
-                                      leading: VerticalDivider(color: Colors.blue,
-                                        thickness: 2,),
-                                      title: Text(shopClients[index]),
-                                    ),
-                                  );
-                                }),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 150,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-client');
-                                },
-                                child: Text("Add new Client", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    else{
-                      return Column(
-                        children: [
-                          Center(
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text("Client list empty"),
-                            ),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 150,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-client');
-                                },
-                                child: Text("Add new Client", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                  }
-                }
-                return const Text("Please wait");
-              },
-
-            ),
-          ),
-        );
-      }
-    }
-    else if(selectedInPos == "Custom Amount"){
-      if(!selectingClient){
-        return Positioned(
-          top: 50,
-          left: 270,
-          child: Container(
-            width: 430,
-            height: 450,
-            child: Column(
-              children: [
-                buildValidCustomAmount(),
-                SizedBox(height: 15,),
-                TextFormField(
-                  controller: customAmountController,
-                  decoration: InputDecoration(
-                    labelText: "Amount (EGP)",
-                  ),
-                ),
-                SizedBox(height: 15,),
-                Row(
-                  children: [
-                    Text("Type:"),
-                    SizedBox(width: 20,),
-                    Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black, width: 1.0),
-                      ),
-                      width: 180,
-                      child: DropdownButton<String>(
-                        value: selectedTypeOfService,
-                        icon: const Icon(Icons.arrow_downward),
-                        elevation: 16,
-                        //style: const TextStyle(color: Colors.deepPurple),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            selectedTypeOfService = newValue!;
-                            displayError = false;
-                          });
-                        },
-                        items: <String>['Services','Products']
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 15,),
-                FutureBuilder(
-                  future: categoryData(),
-                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    if(snapshot.connectionState == ConnectionState.done){
-                      if(snapshot.hasError){
-                        return const Text("There is an error");
-                      }
-                      else if(snapshot.hasData){
-
-
-                        List<String> services = [];
-                        List<String> products = [];
-
-                        services.add("");
-                        products.add("");
-
-                        int serviceIndex = 0;
-                        while(serviceIndex < snapshot.data['$currentShopIndex']['services-amount']){
-                          services.add(snapshot.data['$currentShopIndex']['services']['$serviceIndex']['service-name']);
-                          serviceIndex++;
-                        }
-
-                        int productIndex = 0;
-                        while(productIndex <= snapshot.data['$currentShopIndex']['products-amount']){
-                          products.add(snapshot.data['$currentShopIndex']['products']['$productIndex']['product-name']);
-                          productIndex++;
-                        }
-
-                        return Row(
+      return Positioned(
+        top: 50,
+        left: 270,
+        child: Container(
+          width: 400,
+          height: 400,
+          child: Column(
+            children: [
+              ListTile(
+                leading: Icon(Icons.search),
+                title: Text("Search for products"),
+              ),
+              SizedBox(height: 20,),
+              Expanded(
+                child: ListView.builder(
+                    itemCount: (snapshot.data['$currentShopIndex']['products-amount'] == -1)?1:snapshot.data['$currentShopIndex']['products-amount']+1,
+                    itemBuilder: (context,index){
+                      if(snapshot.data['$currentShopIndex']['products-amount'] == -1){
+                        return Column(
                           children: [
-                            Text(selectedTypeOfService == "Services"?"Service:":"Product:"),
-                            SizedBox(width: 20,),
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black, width: 1.0),
-                              ),
-                              width: 180,
-                              child: DropdownButton<String>(
-                                value: selectedTypeOfService == "Services"?selectedService:selectedProduct,
-                                icon: const Icon(Icons.arrow_downward),
-                                elevation: 16,
-                                //style: const TextStyle(color: Colors.deepPurple),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    if(selectedTypeOfService == "Services"){
-                                      selectedService = newValue!;
-                                    }
-                                    else{
-                                      selectedProduct = newValue!;
-                                    }
-                                    displayError = false;
-                                  });
-                                },
-                                items: selectedTypeOfService == "Services"?services.map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList():products.map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
+                            SizedBox(height: 50,),
+                            Text("You have no products",style: TextStyle(
+                              fontSize: 18,
+                            ),),
                           ],
                         );
                       }
-                    }
-                    return const Text("Please wait");
-                  },
-
-                ),
-                SizedBox(height: 20,),
-                FutureBuilder(
-                  future: categoryData(),
-                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    if(snapshot.connectionState == ConnectionState.done){
-                      if(snapshot.hasError){
-                        return const Text("There is an error");
-                      }
-                      else if(snapshot.hasData){
+                      else{
                         return Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          width: 150,
-                          height: 50,
-                          child: TextButton(
-                            onPressed: (){
+                          margin: EdgeInsets.all(10),
+                          child: ListTile(
+                            onTap: (){
+                              setState(() {
+                                serviceBooked.add(snapshot.data['$currentShopIndex']['products']['$index']['product-name']);
+                                serviceDuration.add('');
+                                servicePrice.add('${snapshot.data['$currentShopIndex']['products']['$index']['product-price']}');
 
-                              List<String> numbers = ['0','1','2','3','4','5','6','7','8','9'];
-                              int customAmountIndex = 0;
-
-
-                              if(selectedTypeOfService == "Services"){
-                                int serviceIndex = 0;
-                                while(serviceIndex < snapshot.data['$currentShopIndex']['services-amount']){
-
-                                  if(selectedService == snapshot.data['$currentShopIndex']['services']['$serviceIndex']['service-name']){
-                                    hours = snapshot.data['$currentShopIndex']['services']['$serviceIndex']['service-hours'];
-                                    minutes = snapshot.data['$currentShopIndex']['services']['$serviceIndex']['service-minutes'];
-                                    break;
-                                  }
-
-                                  serviceIndex++;
-                                }
-                              }
-                              else{
-                                hours = "";
-                                minutes = "";
-                              }
+                                ServiceToBook currentService = ServiceToBook(
+                                  serviceIndex: index,
+                                  title: snapshot.data['$currentShopIndex']['products']['$index']['product-name'],
+                                  duration: '',
+                                  price: '${snapshot.data['$currentShopIndex']['products']['$index']['product-price']}',
+                                  type: 'Products',
+                                  serviceLinked: false,
+                                  membershipServices: [],
+                                  membershipDiscountedServices: [],
+                                );
 
 
 
+                                currentTotal += double.parse('${snapshot.data['$currentShopIndex']['products']['$index']['product-price']}');
 
 
-                              while(customAmountIndex < customAmountController.text.length){
-                                numberFound = false;
-                                int currentNumber = 0;
-                                while(currentNumber < numbers.length){
-                                  if(customAmountController.text[customAmountIndex] == numbers[currentNumber]){
-                                    setState(() {
-                                      numberFound = true;
-                                      displayError = false;
-                                    });
-                                    break;
-                                  }
-                                  currentNumber++;
-                                }
-                                if(!numberFound){
-                                  break;
-                                }
-                                customAmountIndex++;
-                              }
-
-                              if(!numberFound){
-                                setState(() {
-                                  displayError = true;
-                                });
-                              }
-                              else{
-                                print("NUMBER FOUND");
-                                setState(() {
-                                  serviceBooked.add(serviceDescriptionController.text);
-                                  serviceDuration.add(hours + minutes);
-                                  servicePrice.add(customAmountController.text);
-                                  ServiceToBook currentService = ServiceToBook(
-                                    serviceIndex: 0,
-                                    title: serviceDescriptionController.text,
-                                    duration: hours + minutes,
-                                    price: customAmountController.text,
-                                    type: selectedTypeOfService,
-                                    serviceLinked: false,
-                                  );
-
-                                  currentTotal += double.parse(customAmountController.text);
+                                if(productAmountInCart[snapshot.data['$currentShopIndex']['products']['$index']['product-name']] == 0){
                                   cart.add(currentService);
+                                }
 
-                                });
-                              }
+                                productAmountInCart[snapshot.data['$currentShopIndex']['products']['$index']['product-name']] += 1;
+
+                              });
                             },
-                            child: Text("Add to cart", style: TextStyle(
-                              color: Colors.white,
-                            ),),
+                            leading: VerticalDivider(color: Colors.blue,
+                              thickness: 2,),
+                            title: Row(
+                              children: [
+                                Text(snapshot.data['$currentShopIndex']['products']['$index']['product-name']),
+                              ],
+                            ),
+                            trailing: Text("${snapshot.data['$currentShopIndex']['products']['$index']['product-price']} EGP"),
                           ),
                         );
                       }
-                    }
-                    return const Text("Please wait");
-                  },
-
+                    }),
+              ),
+              Container(
+                width: 150,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.circular(10),
                 ),
-
-              ],
-            ),
+                child: TextButton(
+                  onPressed: (){
+                    Navigator.pushNamed(context, '/add-product');
+                  },
+                  child: Text("Add New Product", style: TextStyle(
+                    color: Colors.white,
+                  ),),
+                ),
+              ),
+            ],
           ),
-        );
-      }
-      else{
-        return Positioned(
-          top: 50,
-          left: 260,
-          child: Container(
-            width: 450,
-            height: 420,
-            child: FutureBuilder(
-              future: categoryData(),
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if(snapshot.connectionState == ConnectionState.done){
-                  if(snapshot.hasError){
-                    return const Text("There is an error");
-                  }
-                  else if(snapshot.hasData){
-
-                    shopClients = [];
-                    int clientIndex = 0;
-                    while(clientIndex <= snapshot.data['$currentShopIndex']['client-amount']){
-                      shopClients.add(snapshot.data['$currentShopIndex']['clients']['$clientIndex']['name']);
-                      clientIndex++;
+        ),
+      );
+    }
+    else if(selectedInPos == "Custom Amount"){
+      return Positioned(
+        top: 50,
+        left: 270,
+        child: Container(
+          width: 430,
+          height: 450,
+          child: Column(
+            children: [
+              buildValidCustomAmount(),
+              SizedBox(height: 15,),
+              TextFormField(
+                controller: customAmountController,
+                decoration: InputDecoration(
+                  labelText: "Amount (EGP)",
+                ),
+              ),
+              SizedBox(height: 15,),
+              Row(
+                children: [
+                  Text("Type:"),
+                  SizedBox(width: 20,),
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 1.0),
+                    ),
+                    width: 180,
+                    child: DropdownButton<String>(
+                      value: selectedTypeOfService,
+                      icon: const Icon(Icons.arrow_downward),
+                      elevation: 16,
+                      //style: const TextStyle(color: Colors.deepPurple),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedTypeOfService = newValue!;
+                          displayError = false;
+                        });
+                      },
+                      items: <String>['Services','Products']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 15,),
+              FutureBuilder(
+                future: categoryData(),
+                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  if(snapshot.connectionState == ConnectionState.done){
+                    if(snapshot.hasError){
+                      return const Text("There is an error");
                     }
+                    else if(snapshot.hasData){
 
-                    print("CLIENT AMOUNT ${shopClients.length}");
 
+                      List<String> services = [];
+                      List<String> products = [];
 
-                    if(shopClients.length > 0){
-                      return Column(
+                      services.add("");
+                      products.add("");
+
+                      int serviceIndex = 0;
+                      while(serviceIndex < snapshot.data['$currentShopIndex']['services-amount']){
+                        services.add(snapshot.data['$currentShopIndex']['services']['$serviceIndex']['service-name']);
+                        serviceIndex++;
+                      }
+
+                      int productIndex = 0;
+                      while(productIndex <= snapshot.data['$currentShopIndex']['products-amount']){
+                        products.add(snapshot.data['$currentShopIndex']['products']['$productIndex']['product-name']);
+                        productIndex++;
+                      }
+
+                      return Row(
                         children: [
-                          Center(
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text("Search for clients"),
+                          Text(selectedTypeOfService == "Services"?"Service:":"Product:"),
+                          SizedBox(width: 20,),
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black, width: 1.0),
                             ),
-                          ),
-                          Expanded(
-                            child: ListView.builder(
-                                itemCount: shopClients.length,
-                                itemBuilder: (context,index){
-                                  return Container(
-                                    margin: EdgeInsets.all(10),
-                                    child: ListTile(
-                                      onTap: (){
-                                        setState(() {
-                                          showClientNotSelected = false;
-                                          selectingClient = false;
-                                          currentClient = shopClients[index];
-                                        });
-                                      },
-                                      leading: VerticalDivider(color: Colors.blue,
-                                        thickness: 2,),
-                                      title: Text(shopClients[index]),
-                                    ),
-                                  );
-                                }),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 150,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-client');
-                                },
-                                child: Text("Add new Client", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
+                            width: 180,
+                            child: DropdownButton<String>(
+                              value: selectedTypeOfService == "Services"?selectedService:selectedProduct,
+                              icon: const Icon(Icons.arrow_downward),
+                              elevation: 16,
+                              //style: const TextStyle(color: Colors.deepPurple),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  if(selectedTypeOfService == "Services"){
+                                    selectedService = newValue!;
+                                  }
+                                  else{
+                                    selectedProduct = newValue!;
+                                  }
+                                  displayError = false;
+                                });
+                              },
+                              items: selectedTypeOfService == "Services"?services.map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList():products.map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
                             ),
                           ),
                         ],
                       );
                     }
-                    else{
-                      return Column(
-                        children: [
-                          Center(
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text("Client list empty"),
-                            ),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 150,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-client');
-                                },
-                                child: Text("Add new Client", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ),
-                          ),
-                        ],
+                  }
+                  return const Text("Please wait");
+                },
+
+              ),
+              SizedBox(height: 20,),
+              FutureBuilder(
+                future: categoryData(),
+                builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  if(snapshot.connectionState == ConnectionState.done){
+                    if(snapshot.hasError){
+                      return const Text("There is an error");
+                    }
+                    else if(snapshot.hasData){
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        width: 150,
+                        height: 50,
+                        child: TextButton(
+                          onPressed: (){
+
+                            List<String> numbers = ['0','1','2','3','4','5','6','7','8','9'];
+                            int customAmountIndex = 0;
+
+
+                            if(selectedTypeOfService == "Services"){
+                              int serviceIndex = 0;
+                              while(serviceIndex < snapshot.data['$currentShopIndex']['services-amount']){
+
+                                if(selectedService == snapshot.data['$currentShopIndex']['services']['$serviceIndex']['service-name']){
+                                  hours = snapshot.data['$currentShopIndex']['services']['$serviceIndex']['service-hours'];
+                                  minutes = snapshot.data['$currentShopIndex']['services']['$serviceIndex']['service-minutes'];
+                                  break;
+                                }
+
+                                serviceIndex++;
+                              }
+                            }
+                            else{
+                              hours = "";
+                              minutes = "";
+                            }
+
+
+
+
+
+                            while(customAmountIndex < customAmountController.text.length){
+                              numberFound = false;
+                              int currentNumber = 0;
+                              while(currentNumber < numbers.length){
+                                if(customAmountController.text[customAmountIndex] == numbers[currentNumber]){
+                                  setState(() {
+                                    numberFound = true;
+                                    displayError = false;
+                                  });
+                                  break;
+                                }
+                                currentNumber++;
+                              }
+                              if(!numberFound){
+                                break;
+                              }
+                              customAmountIndex++;
+                            }
+
+                            if(!numberFound){
+                              setState(() {
+                                displayError = true;
+                              });
+                            }
+                            else{
+                              print("NUMBER FOUND");
+                              setState(() {
+                                serviceBooked.add(serviceDescriptionController.text);
+                                serviceDuration.add(hours + minutes);
+                                servicePrice.add(customAmountController.text);
+                                ServiceToBook currentService = ServiceToBook(
+                                  serviceIndex: 0,
+                                  title: serviceDescriptionController.text,
+                                  duration: hours + minutes,
+                                  price: customAmountController.text,
+                                  type: selectedTypeOfService,
+                                  serviceLinked: false,
+                                  membershipServices: [],
+                                  membershipDiscountedServices: [],
+                                );
+
+                                currentTotal += double.parse(customAmountController.text);
+                                cart.add(currentService);
+
+                              });
+                            }
+                          },
+                          child: Text("Add to cart", style: TextStyle(
+                            color: Colors.white,
+                          ),),
+                        ),
                       );
                     }
                   }
-                }
-                return const Text("Please wait");
-              },
+                  return const Text("Please wait");
+                },
 
-            ),
+              ),
+
+            ],
           ),
-        );
-      }
+        ),
+      );
     }
     else if(selectedInPos == "Gift Cards"){
-      if(!selectingClient){
-        return Container();
-      }
-      else{
-        return Positioned(
-          top: 50,
-          left: 260,
-          child: Container(
-            width: 450,
-            height: 420,
-            child: FutureBuilder(
-              future: categoryData(),
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if(snapshot.connectionState == ConnectionState.done){
-                  if(snapshot.hasError){
-                    return const Text("There is an error");
-                  }
-                  else if(snapshot.hasData){
-
-                    shopClients = [];
-                    int clientIndex = 0;
-                    while(clientIndex <= snapshot.data['$currentShopIndex']['client-amount']){
-                      shopClients.add(snapshot.data['$currentShopIndex']['clients']['$clientIndex']['name']);
-                      clientIndex++;
-                    }
-
-                    print("CLIENT AMOUNT ${shopClients.length}");
-
-
-                    if(shopClients.length > 0){
-                      return Column(
-                        children: [
-                          Center(
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text("Search for clients"),
-                            ),
-                          ),
-                          Expanded(
-                            child: ListView.builder(
-                                itemCount: shopClients.length,
-                                itemBuilder: (context,index){
-                                  return Container(
-                                    margin: EdgeInsets.all(10),
-                                    child: ListTile(
-                                      onTap: (){
-                                        setState(() {
-                                          showClientNotSelected = false;
-                                          selectingClient = false;
-                                          currentClient = shopClients[index];
-                                        });
-                                      },
-                                      leading: VerticalDivider(color: Colors.blue,
-                                        thickness: 2,),
-                                      title: Text(shopClients[index]),
-                                    ),
-                                  );
-                                }),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 150,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-client');
-                                },
-                                child: Text("Add new Client", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    else{
-                      return Column(
-                        children: [
-                          Center(
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text("Client list empty"),
-                            ),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 150,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-client');
-                                },
-                                child: Text("Add new Client", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                  }
-                }
-                return const Text("Please wait");
-              },
-
-            ),
-          ),
-        );
-      }
+      return Container();
     }
     else if(selectedInPos == "Packages"){
       return Positioned(
@@ -2170,6 +1760,8 @@ class _PosState extends State<Pos> {
                                           price: snapshot.data['$currentShopIndex']['packages']['$index']['package-price'],
                                           type: 'Packages',
                                           serviceLinked: snapshot.data['$currentShopIndex']['packages']['$index']['service-linked'],
+                                          membershipServices: [],
+                                          membershipDiscountedServices: [],
                                         );
 
                                         currentTotal += double.parse(snapshot.data['$currentShopIndex']['packages']['$index']['package-price']);
@@ -2259,235 +1851,138 @@ class _PosState extends State<Pos> {
       );
     }
     else if(selectedInPos == "Memberships"){
-      if(selectingClient){
-        return Positioned(
-          top: 50,
-          left: 260,
-          child: Container(
-            width: 450,
-            height: 420,
-            child: FutureBuilder(
-              future: categoryData(),
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if(snapshot.connectionState == ConnectionState.done){
-                  if(snapshot.hasError){
-                    return const Text("There is an error");
+      return Positioned(
+        top: 50,
+        left: 260,
+        child: Container(
+          width: 450,
+          height: 420,
+          child: FutureBuilder(
+            future: categoryData(),
+            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+              if(snapshot.connectionState == ConnectionState.done){
+                if(snapshot.hasError){
+                  return const Text("There is an error");
+                }
+                else if(snapshot.hasData){
+
+                  shopMemberships = [];
+                  int membershipIndex = 0;
+                  while(membershipIndex <= snapshot.data['$currentShopIndex']['memberships-amount']){
+                    shopMemberships.add(snapshot.data['$currentShopIndex']['memberships']['$membershipIndex']['name']);
+                    membershipIndex++;
                   }
-                  else if(snapshot.hasData){
-
-                    shopClients = [];
-                    int clientIndex = 0;
-                    while(clientIndex <= snapshot.data['$currentShopIndex']['client-amount']){
-                      shopClients.add(snapshot.data['$currentShopIndex']['clients']['$clientIndex']['name']);
-                      clientIndex++;
-                    }
-
-                    print("CLIENT AMOUNT ${shopClients.length}");
 
 
-                    if(shopClients.length > 0){
-                      return Column(
-                        children: [
-                          Center(
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text("Search for clients"),
+                  if(shopMemberships.isNotEmpty){
+                    return Column(
+                      children: [
+                        Center(
+                          child: ListTile(
+                            leading: Icon(Icons.search),
+                            title: Text("Search for memberships"),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                              itemCount: shopMemberships.length,
+                              itemBuilder: (context,index){
+                                return Container(
+                                  margin: EdgeInsets.all(10),
+                                  child: ListTile(
+                                    onTap: (){
+
+                                      setState(() {
+                                        ServiceToBook currentService = ServiceToBook(
+                                          serviceIndex: index,
+                                          title: snapshot.data['$currentShopIndex']['memberships']['$index']['name'],
+                                          duration: '${snapshot.data['$currentShopIndex']['memberships']['$index']['duration']}',
+                                          price: snapshot.data['$currentShopIndex']['memberships']['$index']['price'],
+                                          type: 'Memberships',
+                                          serviceLinked: false,
+                                          membershipServices: snapshot.data['$currentShopIndex']['memberships']['$index']['selected-services'],
+                                          membershipDiscountedServices: snapshot.data['$currentShopIndex']['memberships']['$index']['selected-discounted-services'],
+                                        );
+
+                                        servicePrice.add(snapshot.data['$currentShopIndex']['memberships']['$index']['price']);
+                                        serviceBooked.add(snapshot.data['$currentShopIndex']['memberships']['$index']['name']);
+                                        serviceDuration.add(snapshot.data['$currentShopIndex']['memberships']['$index']['duration']);
+
+                                        currentTotal += double.parse(snapshot.data['$currentShopIndex']['memberships']['$index']['price']);
+                                        cart.add(currentService);
+                                      });
+
+
+                                    },
+                                    leading: VerticalDivider(color: Colors.blue,
+                                      thickness: 2,),
+                                    title: Text(shopMemberships[index]),
+                                  ),
+                                );
+                              }),
+                        ),
+                        Center(
+                          child: Container(
+                            width: 250,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.deepPurple,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: TextButton(
+                              onPressed: (){
+                                Navigator.pushNamed(context, '/add-membership');
+                              },
+                              child: Text("Add new Membership", style: TextStyle(
+                                color: Colors.white,
+                              ),),
                             ),
                           ),
-                          Expanded(
-                            child: ListView.builder(
-                                itemCount: shopClients.length,
-                                itemBuilder: (context,index){
-                                  return Container(
-                                    margin: EdgeInsets.all(10),
-                                    child: ListTile(
-                                      onTap: (){
-                                        setState(() {
-                                          showClientNotSelected = false;
-                                          selectingClient = false;
-                                          currentClient = shopClients[index];
-                                        });
-                                      },
-                                      leading: VerticalDivider(color: Colors.blue,
-                                        thickness: 2,),
-                                      title: Text(shopClients[index]),
-                                    ),
-                                  );
-                                }),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 150,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-client');
-                                },
-                                child: Text("Add new Client", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
+                        ),
+                      ],
+                    );
+                  }
+                  else{
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+
+                        Text("No memberships", style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),),
+
+                        SizedBox(height: 30,),
+
+                        Center(
+                          child: Container(
+                            width: 250,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.deepPurple,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: TextButton(
+                              onPressed: (){
+                                Navigator.pushNamed(context, '/add-membership');
+                              },
+                              child: Text("Add new Membership", style: TextStyle(
+                                color: Colors.white,
+                              ),),
                             ),
                           ),
-                        ],
-                      );
-                    }
-                    else{
-                      return Column(
-                        children: [
-                          Center(
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text("Client list empty"),
-                            ),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 150,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-client');
-                                },
-                                child: Text("Add new Client", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
+                        ),
+                      ],
+                    );
                   }
                 }
-                return const Text("Please wait");
-              },
+              }
+              return const Text("Please wait");
+            },
 
-            ),
           ),
-        );
-      }
-      else{
-        return Positioned(
-          top: 50,
-          left: 260,
-          child: Container(
-            width: 450,
-            height: 420,
-            child: FutureBuilder(
-              future: categoryData(),
-              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if(snapshot.connectionState == ConnectionState.done){
-                  if(snapshot.hasError){
-                    return const Text("There is an error");
-                  }
-                  else if(snapshot.hasData){
-
-                    shopMemberships = [];
-                    int membershipIndex = 0;
-                    while(membershipIndex <= snapshot.data['$currentShopIndex']['memberships-amount']){
-                      shopMemberships.add(snapshot.data['$currentShopIndex']['memberships']['$membershipIndex']['name']);
-                      membershipIndex++;
-                    }
-
-
-                    if(shopMemberships.isNotEmpty){
-                      return Column(
-                        children: [
-                          Center(
-                            child: ListTile(
-                              leading: Icon(Icons.search),
-                              title: Text("Search for memberships"),
-                            ),
-                          ),
-                          Expanded(
-                            child: ListView.builder(
-                                itemCount: shopMemberships.length,
-                                itemBuilder: (context,index){
-                                  return Container(
-                                    margin: EdgeInsets.all(10),
-                                    child: ListTile(
-                                      onTap: (){
-
-                                      },
-                                      leading: VerticalDivider(color: Colors.blue,
-                                        thickness: 2,),
-                                      title: Text(shopMemberships[index]),
-                                    ),
-                                  );
-                                }),
-                          ),
-                          Center(
-                            child: Container(
-                              width: 250,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.deepPurple,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-membership');
-                                },
-                                child: Text("Add new Membership", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                    else{
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-
-                          Text("No memberships", style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),),
-
-                          SizedBox(height: 30,),
-
-                          Center(
-                            child: Container(
-                              width: 250,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Colors.deepPurple,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: TextButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, '/add-membership');
-                                },
-                                child: Text("Add new Membership", style: TextStyle(
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }
-                  }
-                }
-                return const Text("Please wait");
-              },
-
-            ),
-          ),
-        );
-      }
+        ),
+      );
     }
     else{
       return Container();
@@ -2535,7 +2030,8 @@ class _PosState extends State<Pos> {
                 child: TextButton(
                   onPressed: (){
                     setState(() {
-                      selectingClient = true;
+                      selectedInPos = 'Clients';
+                      showIsAlreadyMember = false;
                     });
                   },
                   child: Text("Change client selected", style: TextStyle(
@@ -2571,6 +2067,7 @@ class _PosState extends State<Pos> {
         ),
       );
     }
+
     else{
      return Positioned(
         top: 100,
@@ -2587,6 +2084,8 @@ class _PosState extends State<Pos> {
               onPressed: (){
                 setState(() {
                   selectingClient = true;
+                  selectedInPos = 'Clients';
+                  showIsAlreadyMember = false;
                 });
               },
               child: Stack(

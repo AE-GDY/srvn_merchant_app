@@ -322,6 +322,63 @@ class DatabaseService{
     );
   }
 
+  Future addMember(
+      String category,
+      int currentShopIdx,
+      int memberIndex,
+      String membershipType,
+      String memberName,
+      String memberEmail,
+      int day,
+      int month,
+      int year,
+      ) async {
+    return await shops.doc(category).set({
+      '$currentShopIdx' : {
+        'members': {
+          '$memberIndex': {
+            'name': memberName,
+            'email': memberEmail,
+            'membership-type': membershipType,
+            'start-day': day,
+            'start-month': month,
+            'start-year': year,
+          },
+        },
+        'members-amount': memberIndex,
+      },
+    },SetOptions(merge: true),
+    );
+  }
+
+  Future addUserMembership(
+      int userIndex,
+      int membershipIndex,
+      String membershipName,
+      String membershipShop,
+      int day,
+      int month,
+      int year,
+      ) async {
+    return await users.doc("signed-up").set({
+      '$userIndex' : {
+        'membership-amount': membershipIndex,
+        'memberships': {
+          '$membershipIndex': {
+            'membership-name': membershipName,
+            'membership-shop': membershipShop,
+            'start-day':day,
+            'start-month': month,
+            'start-year': year,
+          },
+        },
+      },
+    },SetOptions(merge: true),
+    );
+  }
+
+
+
   Future appointmentNoShow(
       String category,
       int currentShopIdx,

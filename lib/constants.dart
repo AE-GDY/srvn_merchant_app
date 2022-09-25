@@ -11,9 +11,12 @@ List<String> monthsFull = ['January', 'February', 'March', 'April', 'May', 'June
 
 
 List<String> shopClients = [];
+List<int> clientsDatabaseIndexes = [];
+List<String> shopClientsEmails = [];
 List<String> shopMemberships = [];
 String currentClient = '';
-
+String currentClientEmail = '';
+int currentClientIndex = 0;
 
 DateTime timePicked = DateTime.now();
 

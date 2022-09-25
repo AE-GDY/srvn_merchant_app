@@ -26,6 +26,8 @@ class ServiceToBook{
   String price;
   String type;
   bool serviceLinked;
+  List<dynamic> membershipServices;
+  List<dynamic> membershipDiscountedServices;
 
   ServiceToBook({
     required this.title,
@@ -34,5 +36,7 @@ class ServiceToBook{
     required this.price,
     required this.type,
     required this.serviceLinked,
+    required this.membershipServices,
+    required this.membershipDiscountedServices,
   });
 }
