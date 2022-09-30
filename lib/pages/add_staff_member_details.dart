@@ -44,6 +44,7 @@ class _AddStaffMemberDetailsState extends State<AddStaffMemberDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         title: Text("Staff Member Details"),
         centerTitle: true,
         actions: [
@@ -85,6 +86,7 @@ class _AddStaffMemberDetailsState extends State<AddStaffMemberDetails> {
 
                                   Text('Staff Member Information', style: TextStyle(
                                     fontSize: 18,
+                                    fontWeight: FontWeight.bold
                                   ),),
 
                                   SizedBox(height: 20,),
@@ -108,6 +110,7 @@ class _AddStaffMemberDetailsState extends State<AddStaffMemberDetails> {
 
                             Text('Staff Member Services', style: TextStyle(
                               fontSize: 18,
+                              fontWeight: FontWeight.bold,
                             ),),
 
                             Container(
@@ -126,64 +129,22 @@ class _AddStaffMemberDetailsState extends State<AddStaffMemberDetails> {
                                       }
                                     }
 
-                                    return Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.all(5),
-                                          child: ListTile(
-                                            leading: VerticalDivider(color: Colors.blue,),
-                                            title: Column(
-                                              children: [
-                                                Text(services[index].title),
-                                                SizedBox(height: 5,),
-                                                Text("${services[index].hours} ${services[index].minutes}"),
-                                              ],
-                                            ),
-                                            trailing: Text(services[index].price + " EGP"),
-                                          ),
-                                          width: 350,
-                                          height: 70,
-                                        ),
-                                        SizedBox(width: 20,),
+                                    return ListTile(
+                                      leading: Switch(
+                                        activeColor: Colors.deepPurple,
+                                        value: serviceSelected[index],
+                                        onChanged: (bool value) {
+                                          setState(() {
+                                            serviceSelected[index] = !serviceSelected[index];
+                                          });
+                                        },
 
-                                        Container(
-                                          width: 50,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(30),
-                                            color: serviceSelected[index]?Colors.green:Colors.grey,
-                                          ),
-                                          child: TextButton(
-                                            onPressed: (){
-                                              setState(() {
-                                                serviceSelected[index] = true;
-                                              });
-                                            },
-                                            child: Icon(Icons.check, color: Colors.white,),
-                                          ),
-                                        ),
-
-                                        SizedBox(width: 10,),
-
-                                        Container(
-                                          width: 50,
-                                          height: 50,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(30),
-                                            color: !serviceSelected[index]?Colors.red:Colors.grey,
-                                          ),
-                                          child: TextButton(
-                                            onPressed: (){
-                                              setState(() {
-                                                serviceSelected[index] = false;
-                                              });
-                                            },
-                                            child: Icon(Icons.close, color: Colors.white,),
-                                          ),
-                                        ),
-
-                                      ],
+                                      ),
+                                      title: Text(services[index].title),
+                                      subtitle:   Text("${services[index].hours} ${services[index].minutes}"),
+                                      trailing: Text(services[index].price + " EGP",style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),),
                                     );
                                   }
                               ),
@@ -202,10 +163,10 @@ class _AddStaffMemberDetailsState extends State<AddStaffMemberDetails> {
 
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.deepPurple,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                width: 250,
+                width: 350,
                 height: 50,
                 child: TextButton(
                   onPressed: (){

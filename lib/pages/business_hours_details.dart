@@ -19,6 +19,7 @@ class _BusinessHoursDetailsState extends State<BusinessHoursDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         title: Text("$currentDayWorkingHoursToChange working hours"),
         centerTitle: true,
         actions: [
@@ -31,19 +32,25 @@ class _BusinessHoursDetailsState extends State<BusinessHoursDetails> {
         scrollDirection: Axis.vertical,
         physics: ScrollPhysics(),
         child: Container(
-          width: 1500,
-          height: 1500,
-          child: Stack(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Positioned(
-                top: 200,
-                left: 400,
+
+              Card(
+                elevation: 2.0,
                 child: Container(
-                  width: 400,
-                  height: 500,
+                  width: 500,
+                  height: 350,
                   child: Column(
                     children: [
+
+                      SizedBox(height: 80,),
+
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text("Opening hours ", style: TextStyle(
                             fontSize: 20,
@@ -128,38 +135,39 @@ class _BusinessHoursDetailsState extends State<BusinessHoursDetails> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 40,),
+                      SizedBox(height: 100,),
+
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.deepPurple,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        width: 350,
+                        height: 50,
+                        child: TextButton(
+                          onPressed: (){
+                            setState(() {
+                              businessHours[currentDayWorkingHoursToChange]!['from'] = openingHour;
+                              businessHours[currentDayWorkingHoursToChange]!['to'] = endingHour;
+                            });
+
+                            Navigator.pushNamed(context, '/business-hours');
+                          },
+                          child: Center(
+                            child: Text("Save", style: TextStyle(
+                              color: Colors.white,
+                            ),),
+                          ),
+                        ),
+                      ),
+
                     ],
                   ),
                 ),
               ),
-              Positioned(
-                  top: 300,
-                  left: 520,
-                  child:Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    width: 150,
-                    height: 40,
-                    child: TextButton(
-                      onPressed: (){
-                        setState(() {
-                          businessHours[currentDayWorkingHoursToChange]!['from'] = openingHour;
-                          businessHours[currentDayWorkingHoursToChange]!['to'] = endingHour;
-                        });
 
-                        Navigator.pushNamed(context, '/business-hours');
-                      },
-                      child: Center(
-                        child: Text("Save", style: TextStyle(
-                        color: Colors.white,
-                      ),),
-                    ),
-                    ),
-                  ),
-              ),
+
+
             ],
           ),
         ),

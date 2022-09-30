@@ -10,12 +10,13 @@ class BusinessCategory extends StatefulWidget {
 }
 
 class _BusinessCategoryState extends State<BusinessCategory> {
-  List<bool> isChecked = [false,false,false];
+  List<bool> isChecked = [false,false,false,false];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         automaticallyImplyLeading: true,
         title: Text("Business Category"),
         centerTitle: true,
@@ -38,55 +39,57 @@ class _BusinessCategoryState extends State<BusinessCategory> {
                 elevation: 2.0,
                 child: Container(
                   width: 500,
-                  height: 400,
+                  height: 500,
                   child: Column(
                     children: [
                       SizedBox(height: 20,),
 
                       Text("Choose your business category", style: TextStyle(
                         fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),),
-                      SizedBox(height: 20,),
+                      SizedBox(height: 30,),
                       Expanded(
                         child: ListView.builder(
                             itemCount: categories.length,
                             itemBuilder: (context,index){
                               return Container(
                                 height: 60,
-                                margin: EdgeInsets.all(5),
-                                child: Card(
-                                  elevation: 1.0,
-                                  child: ListTile(
-                                    //  tileColor: Colors.grey[100],
-                                    dense: true,
-                                    leading: Checkbox(
-                                      value: isChecked[index],
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          int idx = 0;
-                                          while(idx < isChecked.length){
-                                            if(idx != index){
-                                              isChecked[idx] = false;
-                                            }
-                                            idx++;
+                                margin: EdgeInsets.only(left: 50,bottom: 5,top: 5),
+                                child: ListTile(
+                                  //  tileColor: Colors.grey[100],
+                                  dense: true,
+                                  leading: Checkbox(
+                                    activeColor: Colors.deepPurple,
+                                    value: isChecked[index],
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        int idx = 0;
+                                        while(idx < isChecked.length){
+                                          if(idx != index){
+                                            isChecked[idx] = false;
                                           }
-                                          isChecked[index] = !isChecked[index];
-                                          selectedCategory = categories[index];
-                                        });
-                                      },
-                                    ),
-                                    title: Text(categories[index],),
+                                          idx++;
+                                        }
+                                        isChecked[index] = !isChecked[index];
+                                        selectedCategory = categories[index];
+                                      });
+                                    },
                                   ),
+                                  title: Text(categories[index],style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                  ),),
                                 ),
                               );
                             }
                         ),
                       ),
                       Container(
-                        width: 250,
+                        width: 350,
                         height: 50,
                         decoration: BoxDecoration(
-                          color: Colors.blue,
+                          color: Colors.deepPurple,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: TextButton(

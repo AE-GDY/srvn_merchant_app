@@ -116,6 +116,9 @@ class _BusinessHoursLoggedInState extends State<BusinessHoursLoggedIn> {
                 setState(() {
                   selectedPage = 'settings';
                 });
+
+                Navigator.popAndPushNamed(context, '/settings');
+
               },
             ),
           ],
@@ -279,6 +282,8 @@ class _BusinessHoursLoggedInState extends State<BusinessHoursLoggedIn> {
                             setState(() {
                               selectedPage = 'settings';
                             });
+
+                            Navigator.popAndPushNamed(context, '/settings');
                           },
                         ),
                       ),

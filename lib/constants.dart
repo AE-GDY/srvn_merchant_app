@@ -23,6 +23,7 @@ DateTime timePicked = DateTime.now();
 int globalYearBound = 2022;
 int globalMonthBound = 1;
 int globalDayBound = 1;
+String adminName = '';
 String userName = '';
 String password = '';
 String shopName = '';
@@ -30,6 +31,7 @@ String shopAddress = '';
 String shopDescription = '';
 String phoneNumber = '';
 int currentShopIndex = 0;
+int currentUserIndex = 0;
 
 int currentTransactionIndex = 0;
 
@@ -47,6 +49,7 @@ List<String> categories = [
   'Barbershop',
   'Hair Salon',
   'Spa',
+  'Gym',
 ];
 
 String selectedCategory = 'Spa';
@@ -72,37 +75,37 @@ Map<String,Map<String,dynamic>> businessHours = {
   'Sunday': {
     'from':'10:00 AM',
     'to': '10:00 PM',
-    'day-off': false,
+    'day-off': true,
   },
   'Monday': {
     'from':'10:00 AM',
     'to': '10:00 PM',
-    'day-off': false,
+    'day-off': true,
   },
   'Tuesday': {
     'from':'10:00 AM',
     'to': '10:00 PM',
-    'day-off': false,
+    'day-off': true,
   },
   'Wednesday': {
     'from':'10:00 AM',
     'to': '10:00 PM',
-    'day-off': false,
+    'day-off': true,
   },
   'Thursday': {
     'from':'10:00 AM',
     'to': '10:00 PM',
-    'day-off': false,
+    'day-off': true,
   },
   'Friday': {
     'from':'10:00 AM',
     'to': '10:00 PM',
-    'day-off': false,
+    'day-off': true,
   },
   'Saturday': {
     'from':'10:00 AM',
     'to': '10:00 PM',
-    'day-off': false,
+    'day-off': true,
   },
 };
 

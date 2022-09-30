@@ -34,9 +34,11 @@ import 'package:servnn_client_side/pages_logged_in/edit_service.dart';
 import 'package:servnn_client_side/pages_logged_in/edit_staff_member.dart';
 import 'package:servnn_client_side/pages_logged_in/image_upload.dart';
 import 'package:servnn_client_side/pages_logged_in/marketing.dart';
+import 'package:servnn_client_side/pages_logged_in/portfolio.dart';
 import 'package:servnn_client_side/pages_logged_in/pos.dart';
 import 'package:servnn_client_side/pages_logged_in/promotions.dart';
 import 'package:servnn_client_side/pages_logged_in/services_page.dart';
+import 'package:servnn_client_side/pages_logged_in/settings.dart';
 import 'package:servnn_client_side/pages_logged_in/staff_members_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:servnn_client_side/pages_logged_in/stats_and_reports.dart';
@@ -132,6 +134,8 @@ class MyApp extends StatelessWidget {
         '/block-hours': (context) => BlockHours(),
         '/image-upload': (context) => ImageUpload(),
         '/add-membership': (context) => AddMembership(),
+        '/settings': (context) => Settings(),
+        '/portfolio': (context) => Portfolio(),
       },
     );
   }

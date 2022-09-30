@@ -9,6 +9,10 @@ class Service{
   int maxBookings;
   int gap;
 
+  bool credit;
+  bool cash;
+  bool both;
+
   Service({
     required this.title,
     required this.hours,
@@ -16,6 +20,9 @@ class Service{
     required this.price,
     required this.maxBookings,
     required this.gap,
+    required this.credit,
+    required this.cash,
+    required this.both,
 });
 }
 

@@ -152,6 +152,7 @@ class _PosState extends State<Pos> {
                 setState(() {
                   selectedPage = 'settings';
                 });
+                Navigator.popAndPushNamed(context, '/settings');
               },
             ),
           ],
@@ -335,6 +336,7 @@ class _PosState extends State<Pos> {
                                     setState(() {
                                       selectedPage = 'settings';
                                     });
+                                    Navigator.popAndPushNamed(context, '/settings');
                                   },
                                 ),
                               ),

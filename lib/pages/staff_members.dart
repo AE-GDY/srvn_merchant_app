@@ -15,6 +15,7 @@ class _AddStaffMembersState extends State<AddStaffMembers> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         title: Text("Staff Members"),
         centerTitle: true,
         actions: [
@@ -36,7 +37,7 @@ class _AddStaffMembersState extends State<AddStaffMembers> {
                 elevation: 5.0,
                 child: Container(
                   width: 400,
-                  height: 350,
+                  height: 400,
                   child: ListView.builder(
                       itemCount: staffMembers.length,
                       itemBuilder: (context,index){
@@ -77,10 +78,10 @@ class _AddStaffMembersState extends State<AddStaffMembers> {
               SizedBox(height: 50,),
 
               Container(
-                width: 250,
+                width: 350,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.deepPurple,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: TextButton(

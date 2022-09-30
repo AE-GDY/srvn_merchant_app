@@ -113,6 +113,7 @@ class _ServicesPageState extends State<ServicesPage> {
                 setState(() {
                   selectedPage = 'settings';
                 });
+                Navigator.popAndPushNamed(context, '/settings');
               },
             ),
           ],
@@ -289,6 +290,7 @@ class _ServicesPageState extends State<ServicesPage> {
                             setState(() {
                               selectedPage = 'settings';
                             });
+                            Navigator.popAndPushNamed(context, '/settings');
                           },
                         ),
                       ),

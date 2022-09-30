@@ -97,6 +97,7 @@ class _MarketingState extends State<Marketing> {
                 setState(() {
                   selectedPage = 'settings';
                 });
+                Navigator.popAndPushNamed(context, '/settings');
               },
             ),
           ],
@@ -273,6 +274,7 @@ class _MarketingState extends State<Marketing> {
                             setState(() {
                               selectedPage = 'settings';
                             });
+                            Navigator.popAndPushNamed(context, '/settings');
                           },
                         ),
                       ),

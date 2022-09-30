@@ -363,7 +363,7 @@ class _BookingScreenState extends State<BookingScreen> {
                                               calendarStyle: CalendarStyle(
                                                 isTodayHighlighted:true,
                                                 selectedDecoration: BoxDecoration(
-                                                  color: Colors.blue,
+                                                  color: Colors.deepPurple,
                                                   shape: BoxShape.rectangle,
                                                   // borderRadius: BorderRadius.circular(10),
                                                 ),
@@ -933,8 +933,12 @@ class _BookingScreenState extends State<BookingScreen> {
       height: 100,
       margin: EdgeInsets.only(left: 20, top: 10),
       decoration: BoxDecoration(
-        color: index == currentTime[cartIndex]?Colors.blue:Color(0xffEEEEEE),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(5),
+        border: Border.all(
+          color: index == currentTime[cartIndex]?Colors.deepPurple:Colors.grey,
+          width: index == currentTime[cartIndex] ?3:1,
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -952,7 +956,7 @@ class _BookingScreenState extends State<BookingScreen> {
             margin: EdgeInsets.only(left: 2, right:5),
             child: Text(time,
               style: TextStyle(
-                color: Colors.black,
+                color: index == currentTime[cartIndex] ?Colors.black:Colors.grey[800],
                 fontSize: 17,
                 fontFamily: 'Roboto',
               ),
@@ -989,13 +993,13 @@ class _BookingScreenState extends State<BookingScreen> {
                             print("CURRENT EMPLOYEE: ${currentEmployeeIndex[cartIndex]}");
                           },
                           child: CircleAvatar(
-                            radius: 30.0,
+                            radius: 32.0,
                             backgroundColor: (currentEmployeeIndex[cartIndex] == index-1)?Colors.greenAccent: Colors.transparent,
                             child: CircleAvatar(
                               radius: 28.0,
                               backgroundColor: Colors.transparent,
                               child: ClipRRect(
-                                child: Image.asset('assets/no-profile-picture.jpg'),
+                                child: Image.asset('assets/no_profile_picture.jpg'),
                                 borderRadius: BorderRadius.circular(60.0),
                               ),
                             ),
@@ -1698,48 +1702,81 @@ class _BookingScreenState extends State<BookingScreen> {
 
   }
 
-  bool isOccupied(String startTime, String endTime, String currentTime, int currentMinuteGap){
+  bool isOccupied(String startTime, String endTime, String currentTime, int currentMinuteGap) {
 
-    String tempTime = startTime;
-
-
-
-    while(tempTime != endTime){
-
-      String endHour = getHour(endTime);
-      String endMinute = getMinute(endTime);
-      String endEnd = getAMorPM(endTime);
-
-      String tempHour = getHour(tempTime);
-      String tempMinute = getMinute(tempTime);
-      String tempEnd = getAMorPM(tempTime);
-
-      /*
-      if((tempHour == endHour) && (tempEnd == endEnd)){
-        if(int.parse(tempMinute) > int.parse(endMinute)){
-          return true;
-        }
-      }
-      else{
-
-      }
-      */
-      print('TEMP TIME OUT: ${tempTime}');
-      if(tempTime == currentTime){
-        print(' ');
-        print('TEMP TIME: $tempTime');
-        print('CURRENT TIME: $currentTime');
-        return true;
-      }
+    print('current time: $currentTime');
+    print('start time: $startTime');
+    print('end time: $endTime');
+    print('');
 
 
+    bool currentGreaterThanEndTime = isGreater(currentTime,endTime);
 
-      String newTime = generateNewTime(tempTime, tempHour, tempMinute, tempEnd, currentMinuteGap);
-      tempTime = newTime;
+    bool currentGreaterThanStartTime = isGreater(currentTime, startTime);
 
+    if(currentGreaterThanStartTime){
+      print('$currentTime is greater than $startTime');
+    }
+
+    if(!currentGreaterThanEndTime){
+      print('$currentTime is smaller than $endTime');
+    }
+
+
+    if(currentGreaterThanEndTime == false && currentGreaterThanStartTime){
+      return true;
     }
     return false;
   }
+
+  bool isGreater(String firstTime, String secondTime){
+
+    String firstTimeEnd = getAMorPM(firstTime);
+    String secondTimeEnd  = getAMorPM(secondTime);
+
+    String firstTimeHour = getHour(firstTime);
+    String secondTimeHour = getHour(secondTime);
+
+    int firstTimeHourInt = int.parse(firstTimeHour);
+    int secondTimeHourInt = int.parse(secondTimeHour);
+
+    String firstTimeMinute = getMinute(firstTime);
+    String endTimeMinute = getMinute(secondTime);
+
+    int firstTimeMinuteInt = int.parse(firstTimeMinute);
+    int secondTimeMinuteInt = int.parse(endTimeMinute);
+
+    if(firstTimeEnd == 'AM' && firstTimeHourInt == 12){
+      firstTimeHourInt = 0;
+    }
+    if(secondTimeEnd == 'AM' && secondTimeHourInt == 12){
+      secondTimeHourInt = 0;
+    }
+
+    if(firstTimeEnd == 'PM'){
+      if(firstTimeHourInt != 12){
+        firstTimeHourInt += 12;
+      }
+    }
+    if(secondTimeEnd == 'PM'){
+      if(secondTimeEnd != 12){
+        secondTimeHourInt += 12;
+      }
+    }
+
+    if(firstTimeHourInt == secondTimeHourInt){
+      if(firstTimeMinuteInt >= secondTimeMinuteInt){
+        print('1');
+        return true;
+      }
+    }
+    else if(firstTimeHourInt > secondTimeHourInt){
+      print('2');
+      return true;
+    }
+    return false;
+  }
+
 
   // Checks if staff member at "staffIndex" has the current cart's service title in their services
   bool findService(String service, int staffIndex, AsyncSnapshot<dynamic> snapshot){

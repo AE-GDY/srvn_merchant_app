@@ -15,6 +15,7 @@ class _AddingServicesState extends State<AddingServices> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         automaticallyImplyLeading: true,
         title: Text("Services"),
         centerTitle: true,
@@ -32,11 +33,11 @@ class _AddingServicesState extends State<AddingServices> {
           height: 1000,
           child: Column(
             children: [
-              SizedBox(height: 100,),
+              SizedBox(height: 50,),
               Card(
                 elevation: 2.0,
                 child: Container(
-                  width: 500,
+                  width: 550,
                   height: 500,
                   child: Column(
                     children: [
@@ -53,16 +54,37 @@ class _AddingServicesState extends State<AddingServices> {
                             itemBuilder: (context,index){
                               return Container(
                                 margin: EdgeInsets.all(5),
-                                height: 60,
-                                child: Card(
-                                  elevation: 1.0,
-                                  child: ListTile(
-                                    dense: true,
-                                    title: Text(services[index].title),
-                                    trailing: Text('${services[index].hours} ${services[index].minutes}   ${services[index].price} EGP'),
-                                  ),
+                                width: 480,
+                                height: 80,
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      child: Card(
+                                        elevation: 1.0,
+                                        child: ListTile(
+                                          title: Text(services[index].title, style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),),
+                                          subtitle: Text('${services[index].hours} ${services[index].minutes}'),
+                                          trailing:  Text('${services[index].price} EGP'),
+                                        ),
+                                      ),
+                                      width: 450,
+                                      height: 80,
+                                    ),
+
+                                    SizedBox(width: 30,),
+                                   IconButton(iconSize:20,onPressed: (){
+                                    setState(() {
+                                      services.remove(services[index]);
+                                    });
+                                   }, icon: Icon(Icons.delete)),
+
+                                  ],
                                 ),
                               );
+
+
                             }
                         ),
                       ),
@@ -80,10 +102,10 @@ class _AddingServicesState extends State<AddingServices> {
                       ),
                       SizedBox(height: 50,),
                       Container(
-                        width: 250,
-                        height: 40,
+                        width: 350,
+                        height: 50,
                         decoration: BoxDecoration(
-                          color: Colors.blue,
+                          color: Colors.deepPurple,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: TextButton(

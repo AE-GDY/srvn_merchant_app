@@ -12,6 +12,7 @@ class ShopName extends StatefulWidget {
 
 class _ShopNameState extends State<ShopName> {
 
+  TextEditingController adminNameController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
@@ -26,6 +27,7 @@ class _ShopNameState extends State<ShopName> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         title: Text("Details"),
         centerTitle: true,
         actions: [
@@ -61,7 +63,22 @@ class _ShopNameState extends State<ShopName> {
                               fontSize: 23,
                               fontWeight: FontWeight.bold,
                             ),),
-                            SizedBox(height: 70,),
+                            SizedBox(height: 40,),
+                            TextFormField(
+                              controller: adminNameController,
+                              validator: (value){
+                                if(value!.length < 4){
+                                  return "Enter at least 4 characters";
+                                }
+                                else{
+                                  return null;
+                                }
+                              },
+                              decoration: InputDecoration(
+                                labelText: "Admin Name",
+                              ),
+                            ),
+                            SizedBox(height: 20,),
                             TextFormField(
                               controller: userNameController,
                               validator: (value){
@@ -122,10 +139,10 @@ class _ShopNameState extends State<ShopName> {
                             ),
                             SizedBox(height: 50,),
                             Container(
-                              width: 250,
+                              width: 350,
                               height: 50,
                               decoration: BoxDecoration(
-                                color: Colors.blue,
+                                color: Colors.deepPurple,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: TextButton(
@@ -136,6 +153,7 @@ class _ShopNameState extends State<ShopName> {
 
                                   if(isValid){
                                     setState(() {
+                                      adminName = adminNameController.text;
                                       userName = userNameController.text;
                                       phoneNumber = numberController.text;
                                       password = passwordController.text;

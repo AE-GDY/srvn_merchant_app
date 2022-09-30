@@ -120,6 +120,7 @@ class _StaffMembersPageState extends State<StaffMembersPage> {
                 setState(() {
                   selectedPage = 'settings';
                 });
+                Navigator.popAndPushNamed(context, '/settings');
               },
             ),
           ],
@@ -296,6 +297,7 @@ class _StaffMembersPageState extends State<StaffMembersPage> {
                             setState(() {
                               selectedPage = 'settings';
                             });
+                            Navigator.popAndPushNamed(context, '/settings');
                           },
                         ),
                       ),

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:servnn_client_side/services/database.dart';
@@ -45,6 +46,8 @@ class _ImageUploadState extends State<ImageUpload> {
         .get())
         .data();
   }
+
+  bool changeCover = true;
 
   @override
   Widget build(BuildContext context) {
@@ -131,16 +134,6 @@ class _ImageUploadState extends State<ImageUpload> {
                 });
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text("Portfolio"),
-              onTap: () {
-                setState(() {
-                  selectedPage = 'edit-portfolio';
-                });
-                Navigator.popAndPushNamed(context, '/edit-portfolio');
-              },
-            ),
           ],
         ),
       ),
@@ -181,107 +174,211 @@ class _ImageUploadState extends State<ImageUpload> {
         ],
       ),
       body: Center(
-        child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: ClipRRect(
-                borderRadius: BorderRadius.circular(30),
-                child: SizedBox(
-                    height: 500,
-                    width: double.infinity,
-                    child: Column(children: [
-                      const Text("Upload Image"),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Expanded(
-                        flex: 4,
-                        child: Container(
-                          width: 300,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.blue),
+        child: Column(
+          children: [
+
+
+            SizedBox(height: 50,),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 300,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: changeCover?Colors.deepPurple:Colors.grey,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextButton(
+                    onPressed: (){
+                      setState(() {
+                        changeCover = true;
+                      });
+                    },
+                    child: Text("Change Cover Photo", style: TextStyle(
+                      color: Colors.white,
+                    ),),
+                  ),
+                ),
+
+                SizedBox(width: 10,),
+
+                Container(
+                  width: 300,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: changeCover?Colors.grey:Colors.deepPurple,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextButton(
+                    onPressed: (){
+                      setState(() {
+                        changeCover = false;
+                      });
+                    },
+                    child: Text("Upload New Photo", style: TextStyle(
+                      color: Colors.white,
+                    ),),
+                  ),
+                ),
+
+              ],
+            ),
+
+            SizedBox(height: 10,),
+
+            Padding(
+                padding: const EdgeInsets.all(8),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: SizedBox(
+                        height: 300,
+                        width: double.infinity,
+                        child: Column(children: [
+                          changeCover?const Text("Change Cover Image", style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold
+                          ),):const Text("Upload Image To Portfolio", style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold
+                          ),),
+                          const SizedBox(
+                            height: 10,
                           ),
-                          child: Center(
-                            child:Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                // the image that we wanted to upload
-                                Expanded(
-                                    child: _image1 == null
-                                        ? const Center(
-                                        child: Text("No image selected"))
-                                        : Image.memory(_image2)),
-                                ElevatedButton(
-                                    onPressed: () {
-                                      _openPicker();
-                                      if (kDebugMode) {
-                                        print(selectedCategory);
-                                      }
-                                    },
-                                    child: const Text("Select Image")),
-                                FutureBuilder(
-                                  future: categoryData(),
-                                  builder: (BuildContext context,
-                                      AsyncSnapshot<dynamic> snapshot) {
-                                    if (snapshot.connectionState ==
-                                        ConnectionState.done) {
-                                      if (snapshot.hasError) {
-                                        return const Text("There is an error");
-                                      } else if (snapshot.hasData) {
-                                        return ElevatedButton(
-                                            onPressed: () async {
-                                              print('1q');
-                                              if (_image1 != null) {
+                          Expanded(
+                            flex: 4,
+                            child: Container(
+                              width: 400,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Colors.grey),
+                              ),
+                              child: Center(
+                                child:Column(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    // the image that we wanted to upload
+                                    Expanded(
+                                        child: _image1 == null
+                                            ? Center(
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Icon(Icons.image_search_rounded,size: 50,),
 
+                                                Container(
+                                                  width: 150,
+                                                  height: 40,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.deepPurple,
+                                                    borderRadius: BorderRadius.circular(10),
+                                                  ),
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      _openPicker();
+                                                      if (kDebugMode) {
+                                                        print(selectedCategory);
+                                                      }
+                                                    },
+                                                    child: Text("Upload Image", style: TextStyle(
+                                                      color: Colors.white,
+                                                    ),),
+                                                  ),
+                                                ),
 
-                                                print('2q');
-                                                int imageIndex = snapshot.data['$currentShopIndex']['total-images'];
-                                                print('3q');
-                                                print(imageIndex);
-
-                                                print('1w');
-
-                                                String? downloadURL;
-
-                                                final imgId = DateTime.now().millisecondsSinceEpoch.toString();
-                                                print('1wa');
-                                                firebase_storage.Reference reference = firebase_storage.FirebaseStorage.instance.refFromURL('gs://servnn.appspot.com/$selectedCategory/$currentShopIndex/images').child('post_$imgId');
-
-                                                print('2w');
-                                                firebase_storage.TaskSnapshot uploadTask = await reference.putData(_image2, firebase_storage.SettableMetadata(contentType: 'image/jpeg'));
-                                                print('3w');
-                                                downloadURL = await uploadTask.ref.getDownloadURL();
-
-
-                                                if (uploadTask.state == firebase_storage.TaskState.success) {
-                                                  print('done');
-                                                  print('URL: $downloadURL');
-                                                } else {
-                                                  print(uploadTask.state);
-                                                }
-
-                                                await DatabaseService().uploadImage(selectedCategory, currentShopIndex, imageIndex,_image2,downloadURL).whenComplete(() => const AlertDialog(
-                                                    title: Text(
-                                                      "Image Uploaded",
-                                                    )));
-                                              }
-
-                                            },
-                                            child: const Text("Upload Image"));
-                                      }
-                                    }
-                                    return const Text("Please wait");
-                                  },
+                                              ],
+                                            ))
+                                            : Image.memory(_image2)),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                    ]
+
+
+                          SizedBox(height: 10,),
+
+
+                          FutureBuilder(
+                            future: categoryData(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<dynamic> snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                if (snapshot.hasError) {
+                                  return const Text("There is an error");
+                                } else if (snapshot.hasData) {
+                                  return Container(
+                                    width: 300,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      color: Colors.deepPurple,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: TextButton(
+                                        onPressed: () async {
+                                          print('1q');
+                                          if (_image1 != null) {
+
+
+                                            int imageIndex = snapshot.data['$currentShopIndex']['total-images'];
+
+                                            if(changeCover){
+                                              imageIndex = 0;
+                                            }
+
+                                            print(imageIndex);
+
+                                            String? downloadURL;
+
+                                            final imgId = DateTime.now().millisecondsSinceEpoch.toString();
+                                            firebase_storage.Reference reference = firebase_storage.FirebaseStorage.instance.refFromURL('gs://servnn.appspot.com/$selectedCategory/$currentShopIndex/images').child('post_$imgId');
+
+                                            firebase_storage.TaskSnapshot uploadTask = await reference.putData(_image2, firebase_storage.SettableMetadata(contentType: 'image/jpeg'));
+                                            downloadURL = await uploadTask.ref.getDownloadURL();
+
+
+                                            if (uploadTask.state == firebase_storage.TaskState.success) {
+                                              print('done');
+                                              print('URL: $downloadURL');
+                                            } else {
+                                              print(uploadTask.state);
+                                            }
+
+                                            await DatabaseService().uploadImage(
+                                                selectedCategory,
+                                                currentShopIndex,
+                                                imageIndex,
+                                                _image2,
+                                                downloadURL,
+                                                changeCover,
+                                                snapshot.data['$currentShopIndex']['total-images'],
+                                            );
+
+                                            Navigator.popAndPushNamed(context, '/settings');
+
+                                          }
+
+                                        },
+                                        child: changeCover ? const Text("Change Portfolio Cover Image", style: TextStyle(
+                                          color: Colors.white,
+                                        ),): const Text("Add Image To Portfolio", style: TextStyle(
+                                    color: Colors.white,
+                                  ),)),
+                                  );
+                                }
+                              }
+                              return const Text("Please wait");
+                            },
+                          ),
+
+                        ]
+                        )
                     )
                 )
-            )
+            ),
+          ],
         ),
       ),
     );

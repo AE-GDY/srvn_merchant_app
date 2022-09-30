@@ -22,10 +22,15 @@ class _ServiceDetailsState extends State<ServiceDetails> {
 
   int numberOfBookings = 1;
 
+  bool both = true;
+  bool credit = false;
+  bool cash = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         automaticallyImplyLeading: true,
         title: Text("Service details"),
         centerTitle: true,
@@ -48,13 +53,14 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                 elevation: 2.0,
                 child: Container(
                   width: 450,
-                  height: 700,
+                  height: 900,
                   margin: EdgeInsets.all(10),
                   child: Column(
                     children: [
                       SizedBox(height: 20,),
                       Text("Service Information",style: TextStyle(
                         fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),),
                       SizedBox(height: 20,),
                       TextField(
@@ -75,7 +81,8 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                       SizedBox(height: 30,),
 
                       Text("Max bookings per time slot", style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),),
 
                       Row(
@@ -124,7 +131,8 @@ class _ServiceDetailsState extends State<ServiceDetails> {
 
                       SizedBox(height: 30,),
                       Text("Service duration", style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),),
                       SizedBox(height: 30,),
                       Row(
@@ -184,7 +192,8 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                       SizedBox(height: 40,),
 
                       Text("Gap Between Time Slots (minutes)", style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                       ),),
                       SizedBox(height: 10,),
                       Container(
@@ -212,14 +221,79 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                           }).toList(),
                         ),
                       ),
+
+                      SizedBox(height: 20,),
+
+                      Text("Accepted Payment Methods", style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),),
+
+                      SizedBox(height: 10,),
+
+
+                      ListTile(
+                        leading: Switch(
+                          activeColor: Colors.deepPurple,
+                          onChanged: (bool value) {
+                            setState(() {
+                              both = !both;
+
+                              credit = false;
+                              cash = false;
+
+                            });
+                          },
+                          value: both,
+
+                        ),
+                        title: Text("Credit Card and Cash"),
+                      ),
+
+                      SizedBox(height: 5,),
+
+                      ListTile(
+                        leading: Switch(
+                          activeColor: Colors.deepPurple,
+                          onChanged: (bool value) {
+                           setState(() {
+                             credit = !credit;
+                             both = false;
+                           });
+                          },
+                          value: credit,
+
+                        ),
+                        title: Text("Credit Card Only"),
+                      ),
+
+                      SizedBox(height: 5,),
+
+
+                      ListTile(
+                        leading: Switch(
+                          activeColor: Colors.deepPurple,
+                          onChanged: (bool value) {
+                            setState(() {
+                              cash = !cash;
+                              both = false;
+                            });
+                          },
+                          value: cash,
+
+                        ),
+                        title: Text("Cash Only"),
+                      ),
+
+
                       SizedBox(height: 40,),
 
                       Container(
-                        width: 200,
+                        width: 350,
                         height: 50,
                         decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.deepPurple,
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: TextButton(
                           onPressed: (){
@@ -230,6 +304,9 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                               price: servicePriceController.text,
                               maxBookings: numberOfBookings,
                               gap: int.parse(gap),
+                              cash: cash,
+                              credit: credit,
+                              both: both,
 
                             );
 

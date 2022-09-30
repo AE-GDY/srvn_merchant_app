@@ -128,6 +128,7 @@ class _StatsAndReportsState extends State<StatsAndReports> {
                 setState(() {
                   selectedPage = 'settings';
                 });
+                Navigator.popAndPushNamed(context, '/settings');
               },
             ),
           ],
@@ -298,6 +299,7 @@ class _StatsAndReportsState extends State<StatsAndReports> {
                                     setState(() {
                                       selectedPage = 'settings';
                                     });
+                                    Navigator.popAndPushNamed(context, '/settings');
                                   },
                                 ),
                               ),

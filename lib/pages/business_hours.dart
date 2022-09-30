@@ -50,6 +50,7 @@ class _BusinessHoursState extends State<BusinessHours> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         title: Text("Business Hours"),
         centerTitle: true,
         actions: [
@@ -70,52 +71,59 @@ class _BusinessHoursState extends State<BusinessHours> {
 
               SizedBox(height: 50,),
 
-              Container(
-                width: 400,
-                height: 500,
-                child: ListView.builder(
-                    itemCount: weekDays.length,
-                    itemBuilder: (context,index){
-                      return Container(
-                        width: 200,
-                        height: 50,
-                        margin: EdgeInsets.all(5),
-                        child: ListTile(
-                          onTap: (){
-                            if(daySelected[index]){
-                              setState(() {
-                                currentDayWorkingHoursToChange = weekDays[index];
-                              });
+              Card(
+                elevation: 2.0,
+                child: Container(
+                  width: 450,
+                  height: 450,
+                  margin: EdgeInsets.all(10),
+                  child: ListView.builder(
+                      itemCount: weekDays.length,
+                      itemBuilder: (context,index){
+                        return Container(
+                          width: 200,
+                          height: 50,
+                          margin: EdgeInsets.all(5),
+                          child: ListTile(
+                            onTap: (){
+                              if(daySelected[index]){
+                                setState(() {
+                                  currentDayWorkingHoursToChange = weekDays[index];
+                                });
 
-                              Navigator.pushNamed(context, '/busines-hours-details');
-                            }
-                          },
-                          title: Text(weekDays[index]),
-                          subtitle: Text(!daySelected[index]?"Closed":'${businessHours[weekDays[index]]!['from']} - '
-                              '${businessHours[weekDays[index]]!['to']}',),
-                          trailing: Switch(
-                            value: daySelected[index],
-                            onChanged: (bool value) {
-                              setState(() {
-                                //print("day selected length: ${daySelected.length}");
-
-                                daySelected[index] = !daySelected[index];
-
-                                businessHours[weekDays[index]]!['day-off'] = daySelected[index];
-
-                              });
+                                Navigator.pushNamed(context, '/busines-hours-details');
+                              }
                             },
+                            title: Text(weekDays[index]),
+                            subtitle: Text(!daySelected[index]?"Closed":'${businessHours[weekDays[index]]!['from']} - '
+                                '${businessHours[weekDays[index]]!['to']}',),
+                            trailing: Switch(
+                              activeColor: Colors.deepPurple,
+                              value: daySelected[index],
+                              onChanged: (bool value) {
+                                setState(() {
+                                  //print("day selected length: ${daySelected.length}");
+
+                                  daySelected[index] = !daySelected[index];
+
+                                  businessHours[weekDays[index]]!['day-off'] = daySelected[index];
+
+                                });
+                              },
+                            ),
                           ),
-                        ),
-                      );
-                    }),
+                        );
+                      }),
+                ),
               ),
 
+              SizedBox(height: 10,),
+
               Container(
-                width: 250,
+                width: 350,
                 height: 50,
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.deepPurple,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: TextButton(

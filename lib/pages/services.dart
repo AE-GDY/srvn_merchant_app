@@ -15,6 +15,7 @@ class _ServicesState extends State<Services> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         title: Text("Services"),
         centerTitle: true,
         actions: [

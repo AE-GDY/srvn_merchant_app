@@ -25,6 +25,7 @@ class DatabaseService{
         'user-amount': 0,
         'users':{
           '${0}':{
+            'name': adminName,
             'email': userName,
             'password': password,
           },
@@ -402,15 +403,19 @@ class DatabaseService{
   Future uploadImage(
       String category,
       int currentShopIdx,
-      int total_image,
+      int imageIndex,
       Uint8List image,
       String downloadURL,
+      bool changeCover,
+      int totalImages,
       ) async {
 
     return await shops.doc(category).set({
       '$currentShopIdx': {
-        'images': {'$total_image': downloadURL},
-        'total-images': total_image+1
+        'images': {
+          '$imageIndex': downloadURL
+        },
+        'total-images': changeCover?totalImages:imageIndex+1
       }
     }, SetOptions(merge: true)).whenComplete(() => const AlertDialog(
         title: Text(
@@ -864,6 +869,10 @@ class DatabaseService{
         'services-amount': services.length,
         'services': {
           '$serviceIndex': {
+
+            'credit': services[serviceIndex].credit,
+            'cash': services[serviceIndex].cash,
+            'both': services[serviceIndex].both,
 
             'flash-promotions-amount': 0,
             'last-minute-promotions-amount': 0,

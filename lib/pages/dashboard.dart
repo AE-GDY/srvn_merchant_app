@@ -110,12 +110,12 @@ class _DashBoardState extends State<DashBoard> {
               leading: Icon(Icons.settings),
               title: Text("Settings"),
               onTap: () {
-                Navigator.pushNamed(context, '/image-upload');
-                /*
+
+
                 setState(() {
                   selectedPage = 'settings';
                 });
-                */
+                Navigator.popAndPushNamed(context, '/settings');
               },
             ),
           ],
@@ -292,6 +292,7 @@ class _DashBoardState extends State<DashBoard> {
                             setState(() {
                               selectedPage = 'settings';
                             });
+                            Navigator.popAndPushNamed(context, '/settings');
                           },
                         ),
                       ),
