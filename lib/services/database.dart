@@ -415,7 +415,7 @@ class DatabaseService{
         'images': {
           '$imageIndex': downloadURL
         },
-        'total-images': changeCover?totalImages:imageIndex+1
+        'total-images': (imageIndex < 1)?totalImages:imageIndex+1
       }
     }, SetOptions(merge: true)).whenComplete(() => const AlertDialog(
         title: Text(

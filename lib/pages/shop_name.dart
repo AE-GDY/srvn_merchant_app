@@ -42,7 +42,7 @@ class _ShopNameState extends State<ShopName> {
         child: Form(
           key: formKey,
           child: Container(
-            height: 1000,
+            height: MediaQuery.of(context).size.height * 1.5,
             child: Stack(
               children: [
                 Positioned(

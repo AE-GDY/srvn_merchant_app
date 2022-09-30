@@ -48,6 +48,7 @@ class _ImageUploadState extends State<ImageUpload> {
   }
 
   bool changeCover = true;
+  bool changeLogo = false;
 
   @override
   Widget build(BuildContext context) {
@@ -184,7 +185,7 @@ class _ImageUploadState extends State<ImageUpload> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  width: 300,
+                  width: 250,
                   height: 50,
                   decoration: BoxDecoration(
                     color: changeCover?Colors.deepPurple:Colors.grey,
@@ -194,6 +195,7 @@ class _ImageUploadState extends State<ImageUpload> {
                     onPressed: (){
                       setState(() {
                         changeCover = true;
+                        changeLogo = false;
                       });
                     },
                     child: Text("Change Cover Photo", style: TextStyle(
@@ -205,19 +207,42 @@ class _ImageUploadState extends State<ImageUpload> {
                 SizedBox(width: 10,),
 
                 Container(
-                  width: 300,
+                  width: 250,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: changeCover?Colors.grey:Colors.deepPurple,
+                    color: (changeCover || changeLogo)?Colors.grey:Colors.deepPurple,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: TextButton(
                     onPressed: (){
                       setState(() {
                         changeCover = false;
+                        changeLogo = false;
                       });
                     },
                     child: Text("Upload New Photo", style: TextStyle(
+                      color: Colors.white,
+                    ),),
+                  ),
+                ),
+
+                SizedBox(width: 10,),
+
+                Container(
+                  width: 250,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: (!changeLogo)?Colors.grey:Colors.deepPurple,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: TextButton(
+                    onPressed: (){
+                      setState(() {
+                        changeCover = false;
+                        changeLogo = true;
+                      });
+                    },
+                    child: Text("Upload Logo", style: TextStyle(
                       color: Colors.white,
                     ),),
                   ),
@@ -236,10 +261,15 @@ class _ImageUploadState extends State<ImageUpload> {
                         height: 300,
                         width: double.infinity,
                         child: Column(children: [
-                          changeCover?const Text("Change Cover Image", style: TextStyle(
+                          (changeCover && !changeLogo)?const Text("Change Cover Image", style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold
-                          ),):const Text("Upload Image To Portfolio", style: TextStyle(
+                          ),):
+                          (!changeCover && !changeLogo)?const Text("Upload Image To Portfolio", style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold
+                          ),):
+                          const Text("Upload Logo", style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold
                           ),),
@@ -327,6 +357,9 @@ class _ImageUploadState extends State<ImageUpload> {
                                             if(changeCover){
                                               imageIndex = 0;
                                             }
+                                            else if(changeLogo){
+                                              imageIndex = -1;
+                                            }
 
                                             print(imageIndex);
 
@@ -359,13 +392,16 @@ class _ImageUploadState extends State<ImageUpload> {
                                             Navigator.popAndPushNamed(context, '/settings');
 
                                           }
-
                                         },
-                                        child: changeCover ? const Text("Change Portfolio Cover Image", style: TextStyle(
+                                        child: (changeCover && !changeLogo) ? const Text("Change Portfolio Cover Image", style: TextStyle(
                                           color: Colors.white,
-                                        ),): const Text("Add Image To Portfolio", style: TextStyle(
+                                        ),):
+                                        (!changeCover && !changeLogo) ? const Text("Add Image To Portfolio", style: TextStyle(
                                     color: Colors.white,
-                                  ),)),
+                                  ),):
+                                        const Text("Upload Logo", style: TextStyle(
+                                          color: Colors.white,
+                                        ),)),
                                   );
                                 }
                               }
