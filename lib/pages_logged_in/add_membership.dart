@@ -64,13 +64,13 @@ class _AddMembershipState extends State<AddMembership> {
                   servicesToSelectFrom.add('All');
                   servicesSelected.add(false);
                   discountedServices.add(false);
-                  discountedServicesPercentages.add(0);
+                  discountedServicesPercentages.add(5);
 
                   while(serviceIndex < snapshot.data['$currentShopIndex']['services-amount']){
                     discountedServices.add(false);
                     servicesSelected.add(false);
                     servicesToSelectFrom.add(snapshot.data['$currentShopIndex']['services']['$serviceIndex']['service-name']);
-                    discountedServicesPercentages.add(0);
+                    discountedServicesPercentages.add(5);
                     serviceIndex++;
                   }
 
@@ -116,7 +116,7 @@ class _AddMembershipState extends State<AddMembership> {
 
                           SizedBox(height: 10,),
 
-                          Text('Services Included', style: TextStyle(
+                          Text('Services Included (Free)', style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),),
@@ -271,7 +271,7 @@ class _AddMembershipState extends State<AddMembership> {
 
                                         ),
                                         title: Text(servicesToSelectFrom[index]),
-                                        trailing: (index != 0)?Container(
+                                        trailing: (index != 0 && discountedServices[index])?Container(
                                         width: 200,
                                         height: 50,
                                         child: Row(
@@ -285,9 +285,12 @@ class _AddMembershipState extends State<AddMembership> {
                                               ),
                                               child: IconButton(
                                                 onPressed: (){
-                                                  setState(() {
-                                                    discountedServicesPercentages[index]--;
-                                                  });
+
+                                                  if(discountedServicesPercentages[index] != 1){
+                                                    setState(() {
+                                                      discountedServicesPercentages[index]--;
+                                                    });
+                                                  }
                                                 },
                                                 icon: Icon(Icons.remove,color: Colors.white,),
                                               ),

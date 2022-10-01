@@ -50,7 +50,7 @@ class _ShopNameState extends State<ShopName> {
                   left: 370,
                   child: Container(
                     margin: EdgeInsets.all(20),
-                    height: 700,
+                    height: MediaQuery.of(context).size.height *1.2,
                     width: 500,
                     child: Card(
                       elevation: 3.0,
@@ -137,7 +137,7 @@ class _ShopNameState extends State<ShopName> {
                                 labelText: "Short Description",
                               ),
                             ),
-                            SizedBox(height: 50,),
+                            Expanded(child: Container(),),
                             Container(
                               width: 350,
                               height: 50,

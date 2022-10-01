@@ -31,11 +31,27 @@ class _ProfileReadyState extends State<ProfileReady> {
   late Uint8List _image2;
   late FilePickerResult imageresult;
 
+
+  String? logo1;
+  late Uint8List logo2;
+  late FilePickerResult imageresult2;
+
   void _openPicker() async {
     imageresult = (await FilePicker.platform.pickFiles(type: FileType.image))!;
     setState(() {
       _image2 = imageresult.files.single.bytes!;
       _image1 = imageresult.files.single.name;
+      if (kDebugMode) {
+        print(selectedCategory);
+      }
+    });
+  }
+
+  void _openLogoPicker() async {
+    imageresult2 = (await FilePicker.platform.pickFiles(type: FileType.image))!;
+    setState(() {
+      logo2 = imageresult2.files.single.bytes!;
+      logo1 = imageresult2.files.single.name;
       if (kDebugMode) {
         print(selectedCategory);
       }
@@ -95,55 +111,110 @@ class _ProfileReadyState extends State<ProfileReady> {
                               child: SizedBox(
                                   height: 250,
                                   width: double.infinity,
-                                  child: Column(children: [
-                                    Container(
-                                      width: 250,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: Colors.deepPurple,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: TextButton(
-                                        onPressed: () {
-                                          _openPicker();
-                                          if (kDebugMode) {
-                                            print(selectedCategory);
-                                          }
-                                        },
-                                        child: const Text("Select Cover Image",style: TextStyle(
-                                          color: Colors.white,
-                                        ),),
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Expanded(
-                                      flex: 4,
-                                      child: Container(
-                                        width: 350,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10),
-                                          border: Border.all(color: Colors.grey),
-                                        ),
-                                        child: Center(
-                                          child:Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              // the image that we wanted to upload
-                                              Expanded(
-                                                  child: _image1 == null
-                                                      ? const Center(
-                                                      child: Icon(Icons.image_search_rounded,size: 50,))
-                                                      : Image.memory(_image2,width: 350,height: 250,)),
-
-                                            ],
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Column(children: [
+                                        Container(
+                                          width: 250,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color: Colors.deepPurple,
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          child: TextButton(
+                                            onPressed: () {
+                                              _openPicker();
+                                              if (kDebugMode) {
+                                                print(selectedCategory);
+                                              }
+                                            },
+                                            child: const Text("Select Cover Image",style: TextStyle(
+                                              color: Colors.white,
+                                            ),),
                                           ),
                                         ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Expanded(
+                                          flex: 4,
+                                          child: Container(
+                                            width: 250,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(10),
+                                              border: Border.all(color: Colors.grey),
+                                            ),
+                                            child: Center(
+                                              child:Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  // the image that we wanted to upload
+                                                  Expanded(
+                                                      child: _image1 == null
+                                                          ? const Center(
+                                                          child: Icon(Icons.image_search_rounded,size: 50,))
+                                                          : Image.memory(_image2,width: 350,height: 250,)),
+
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ]
                                       ),
-                                    ),
-                                  ]
-                                  )
+                                      SizedBox(width: 10,),
+                                      Column(children: [
+                                        Container(
+                                          width: 250,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color: Colors.deepPurple,
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          child: TextButton(
+                                            onPressed: () {
+                                              _openLogoPicker();
+                                              if (kDebugMode) {
+                                                print(selectedCategory);
+                                              }
+                                            },
+                                            child: const Text("Select Logo",style: TextStyle(
+                                              color: Colors.white,
+                                            ),),
+                                          ),
+                                        ),
+                                        const SizedBox(
+                                          height: 10,
+                                        ),
+                                        Expanded(
+                                          flex: 4,
+                                          child: Container(
+                                            width: 250,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(10),
+                                              border: Border.all(color: Colors.grey),
+                                            ),
+                                            child: Center(
+                                              child:Column(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  // the image that we wanted to upload
+                                                  Expanded(
+                                                      child: logo1 == null
+                                                          ? const Center(
+                                                          child: Icon(Icons.image_search_rounded,size: 50,))
+                                                          : Image.memory(logo2,width: 350,height: 250,)),
+
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ]
+                                      ),
+                                    ],
+                                  ),
                               )
                           ),
                         ),
@@ -242,6 +313,37 @@ class _ProfileReadyState extends State<ProfileReady> {
                                           imageIndex+1,
                                       );
 
+                                    }
+
+                                    if(logo1 != null){
+                                      int imageIndex = 0;
+                                      String? downloadURL;
+
+                                      final imgId = DateTime.now().millisecondsSinceEpoch.toString();
+
+                                      firebase_storage.Reference reference = firebase_storage.FirebaseStorage.instance.refFromURL('gs://servnn.appspot.com/$selectedCategory/$currentShopIndex/images').child('post_$imgId');
+
+                                      firebase_storage.TaskSnapshot uploadTask = await reference.putData(logo2, firebase_storage.SettableMetadata(contentType: 'image/jpeg'));
+
+                                      downloadURL = await uploadTask.ref.getDownloadURL();
+
+
+                                      if (uploadTask.state == firebase_storage.TaskState.success) {
+                                        print('done');
+                                        print('URL: $downloadURL');
+                                      } else {
+                                        print(uploadTask.state);
+                                      }
+
+                                      await databaseService.uploadImage(
+                                        selectedCategory,
+                                        snapshot.data['total-shop-amount']+1,
+                                        -1,
+                                        logo2,
+                                        downloadURL,
+                                        false,
+                                        imageIndex+1,
+                                      );
                                     }
 
 
