@@ -57,101 +57,6 @@ class _ConfirmPurchaseState extends State<ConfirmPurchase> {
                     }
                     else if(snapshot.hasData){
 
-                      String startTime = '';
-                      String endTime = '';
-
-                      int startHour = snapshot.data[0]['$currentShopIndex']['appointments']['$currentTransactionIndex']['start-hour'];
-                      int endHour = snapshot.data[0]['$currentShopIndex']['appointments']['$currentTransactionIndex']['end-hour'];
-
-                      int startHourActual = snapshot.data[0]['$currentShopIndex']['appointments']['$currentTransactionIndex']['start-hour-actual'];
-                      int endHourActual = snapshot.data[0]['$currentShopIndex']['appointments']['$currentTransactionIndex']['end-hour-actual'];
-
-                      int startMinutes = snapshot.data[0]['$currentShopIndex']['appointments']['$currentTransactionIndex']['start-minutes'];
-                      int endMinutes = snapshot.data[0]['$currentShopIndex']['appointments']['$currentTransactionIndex']['end-minutes'];
-
-
-
-
-
-
-                      if(startHourActual < 12){
-                        if(startMinutes == 0){
-                          startTime = '$startHour:00 AM';
-                        }
-                        else{
-                          startTime = '$startHour:$startMinutes AM';
-                        }
-                      }
-                      else if(startHourActual == 12){
-                        if(startHourActual < endHourActual){
-                          if(startMinutes == 0){
-                            startTime = '$startHour:00 PM';
-                          }
-                          else{
-                            startTime = '$startHour:$startMinutes PM';
-                          }
-                        }
-                        else{
-                          if(startMinutes == 0){
-                            startTime = '$startHour:00 PM';
-
-                          }
-                          else{
-                            startTime = '$startHour:$startMinutes PM';
-                          }
-                        }
-                      }
-                      else{
-                        if(startMinutes == 0){
-                          startTime = '$startHour:00 PM';
-                        }
-                        else{
-                          startTime = '$startHour:$startMinutes PM';
-                        }
-                      }
-
-                      if(endHourActual < 12){
-
-                        if(endMinutes == 0){
-                          endTime = '$endHour:00 AM';
-
-                        }
-                        else{
-                          endTime = '$endHour:$endMinutes AM';
-
-                        }
-                      }
-                      else if(endHourActual == 12){
-                        if(endHourActual < startHourActual){
-                          if(endMinutes == 0){
-                            endTime = '$endHour:00 PM';
-
-                          }
-                          else{
-                            endTime = '$endHour:$endMinutes PM';
-
-                          }
-                        }
-                        else{
-                          if(endMinutes == 0){
-                            endTime = '$endHour:00 PM';
-                          }
-                          else{
-                            endTime = '$endHour:$endMinutes PM';
-                          }
-                        }
-                      }
-                      else{
-                        if(endMinutes == 0){
-                          endTime = '$endHour:00 PM';
-                        }
-                        else{
-                          endTime = '$endHour:$endMinutes PM';
-                        }
-                      }
-
-
-
                       return Column(
                         children: [
                           SizedBox(height: 20,),
@@ -190,7 +95,7 @@ class _ConfirmPurchaseState extends State<ConfirmPurchase> {
                             fontWeight: FontWeight.bold,
                           ),),
                           SizedBox(height: 5,),
-                          Text(startTime, style: TextStyle(
+                          Text('${snapshot.data[0]['$currentShopIndex']['appointments']['$currentTransactionIndex']['start-time']}', style: TextStyle(
                             fontSize: 18,
                           ),),
                           SizedBox(height: 10,),
@@ -200,7 +105,7 @@ class _ConfirmPurchaseState extends State<ConfirmPurchase> {
                             fontWeight: FontWeight.bold,
                           ),),
                           SizedBox(height: 5,),
-                          Text(endTime, style: TextStyle(
+                          Text('${snapshot.data[0]['$currentShopIndex']['appointments']['$currentTransactionIndex']['end-time']}', style: TextStyle(
                             fontSize: 18,
                           ),),
                           SizedBox(height: 10,),

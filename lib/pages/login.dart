@@ -21,6 +21,11 @@ class _LoginState extends State<Login> {
     doc(selectedCategory).get()).data();
   }
 
+  Future<Map<String, dynamic>?> userData() async {
+    return (await FirebaseFirestore.instance.collection('users').
+    doc("signed-up").get()).data();
+  }
+
   bool showError = false;
 
   DatabaseService databaseService = DatabaseService();
@@ -268,7 +273,7 @@ class _LoginState extends State<Login> {
                             */
 
                             FutureBuilder(
-                              future: categoryData(),
+                              future: Future.wait([categoryData(),userData()]),
                               builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                                 if(snapshot.connectionState == ConnectionState.done){
                                   if(snapshot.hasError){
@@ -283,23 +288,23 @@ class _LoginState extends State<Login> {
                                         ),
                                         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                         child: TextButton(
-                                          child: const Text('Login', style: TextStyle(
+                                          child: const Text('Log in', style: TextStyle(
                                             color: Colors.white,
                                           ),),
                                           onPressed: () async {
 
-                                            int noShowAmount = snapshot.data['$currentShopIndex']['appointments']['no-shows'];
+                                            int noShowAmount = snapshot.data[0]['$currentShopIndex']['appointments']['no-shows'];
 
                                             int appointmentIndex = 0;
-                                            while(appointmentIndex <= snapshot.data['$currentShopIndex']['appointments']['appointment-amount']){
+                                            while(appointmentIndex <= snapshot.data[0]['$currentShopIndex']['appointments']['appointment-amount']){
 
 
-                                              if(snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['appointment-status'] == 'incomplete'){
+                                              if(snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['appointment-status'] == 'incomplete'){
 
 
-                                                if(snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['start-day'] < DateTime.now().day
-                                                && snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['start-month'] <= DateTime.now().month
-                                                && snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['start-year'] <= DateTime.now().year){
+                                                if(snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['start-day'] < DateTime.now().day
+                                                && snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['start-month'] <= DateTime.now().month
+                                                && snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['start-year'] <= DateTime.now().year){
                                                   noShowAmount++;
                                                   await databaseService.appointmentNoShow(
                                                       selectedCategory,
@@ -307,14 +312,30 @@ class _LoginState extends State<Login> {
                                                       appointmentIndex,
                                                       noShowAmount
                                                   );
+
+
+                                                  String clientEmail = snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['client-email'];
+
+                                                  int userIndex = 0;
+                                                  while(userIndex <= snapshot.data[1]['total-user-amount']){
+
+                                                    if(clientEmail == snapshot.data[1]['$userIndex']['email']){
+                                                      await databaseService.updateUserAppointmentStatus(
+                                                          userIndex,
+                                                          snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['user-appointment-index']
+                                                      );
+                                                      break;
+                                                    }
+                                                    userIndex++;
+                                                  }
                                                 }
 
                                                 else{
-                                                  if(snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['start-day'] <= DateTime.now().day){
-                                                    if(snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['start-month'] <= DateTime.now().month){
-                                                      if(snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['start-year'] <= DateTime.now().year) {
+                                                  if(snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['start-day'] <= DateTime.now().day){
+                                                    if(snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['start-month'] <= DateTime.now().month){
+                                                      if(snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['start-year'] <= DateTime.now().year) {
 
-                                                        if(snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['start-hour-actual'] < DateTime.now().hour){
+                                                        if(snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['start-hour-actual'] < DateTime.now().hour){
 
                                                           noShowAmount++;
                                                           await databaseService.appointmentNoShow(
@@ -323,9 +344,26 @@ class _LoginState extends State<Login> {
                                                               appointmentIndex,
                                                               noShowAmount
                                                           );
+
+
+                                                          String clientEmail = snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['client-email'];
+
+                                                          int userIndex = 0;
+                                                          while(userIndex <= snapshot.data[1]['total-user-amount']){
+
+                                                            if(clientEmail == snapshot.data[1]['$userIndex']['email']){
+                                                              await databaseService.updateUserAppointmentStatus(
+                                                                  userIndex,
+                                                                  snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['user-appointment-index']
+                                                              );
+                                                              break;
+                                                            }
+                                                            userIndex++;
+                                                          }
+
                                                         }
-                                                        else if(snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['start-hour-actual'] == DateTime.now().day){
-                                                          if(snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['start-minutes'] < DateTime.now().minute){
+                                                        else if(snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['start-hour-actual'] == DateTime.now().day){
+                                                          if(snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['start-minutes'] < DateTime.now().minute){
 
                                                             noShowAmount++;
                                                             await databaseService.appointmentNoShow(
@@ -334,6 +372,22 @@ class _LoginState extends State<Login> {
                                                                 appointmentIndex,
                                                                 noShowAmount
                                                             );
+
+                                                            String clientEmail = snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['client-email'];
+
+                                                            int userIndex = 0;
+                                                            while(userIndex <= snapshot.data[1]['total-user-amount']){
+
+                                                              if(clientEmail == snapshot.data[1]['$userIndex']['email']){
+                                                                await databaseService.updateUserAppointmentStatus(
+                                                                    userIndex,
+                                                                    snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['user-appointment-index']
+                                                                );
+                                                                break;
+                                                              }
+                                                              userIndex++;
+                                                            }
+
                                                           }
                                                         }
 
@@ -351,19 +405,20 @@ class _LoginState extends State<Login> {
 
 
 
+
                                             int shopIndex = 0;
                                             bool isAvailable = false;
-                                            while(shopIndex < snapshot.data['total-shop-amount']+1){
+                                            while(shopIndex < snapshot.data[0]['total-shop-amount']+1){
                                               int userIndex = 0;
-                                              while(userIndex <= snapshot.data['$shopIndex']['user-amount']){
-                                                if(snapshot.data['$shopIndex']['users']['$userIndex']['email'] == nameController.text){
-                                                  if(snapshot.data['$shopIndex']['users']['$userIndex']['password'] == passwordController.text){
+                                              while(userIndex <= snapshot.data[0]['$shopIndex']['user-amount']){
+                                                if(snapshot.data[0]['$shopIndex']['users']['$userIndex']['email'] == nameController.text){
+                                                  if(snapshot.data[0]['$shopIndex']['users']['$userIndex']['password'] == passwordController.text){
                                                     setState(() {
                                                       currentUserIndex = userIndex;
                                                       currentShopIndex = shopIndex;
-                                                      shopName = snapshot.data['$shopIndex']['shop-name'];
-                                                      shopAddress = snapshot.data['$shopIndex']['shop-address'];
-                                                      shopDescription = snapshot.data['$shopIndex']['shop-description'];
+                                                      shopName = snapshot.data[0]['$shopIndex']['shop-name'];
+                                                      shopAddress = snapshot.data[0]['$shopIndex']['shop-address'];
+                                                      shopDescription = snapshot.data[0]['$shopIndex']['shop-description'];
                                                       isAvailable = true;
                                                     });
                                                     break;

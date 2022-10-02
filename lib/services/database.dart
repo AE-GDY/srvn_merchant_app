@@ -399,6 +399,22 @@ class DatabaseService{
     );
   }
 
+  Future updateUserAppointmentStatus(
+      int userIndex,
+      int appointmentIndex,
+      ) async {
+    return await users.doc('signed-up').set({
+      '$userIndex' : {
+        'appointments':{
+          '$appointmentIndex':{
+            'appointment-status': false,
+          },
+        },
+      },
+    },SetOptions(merge: true),
+    );
+  }
+
   // Upload the image to firebase storage
   Future uploadImage(
       String category,
@@ -440,22 +456,6 @@ class DatabaseService{
             'notification': 'Appointment complete at $currentShop, please leave a review',
             'sender': currentShop,
             'viewed': false,
-          },
-        },
-      },
-    },SetOptions(merge: true),
-    );
-  }
-
-  Future updateUserAppointmentStatus(
-      int userIndex,
-      int appointmentIndex,
-      ) async {
-    return await users.doc('signed-up').set({
-      '$userIndex' : {
-        'appointments':{
-          '$appointmentIndex': {
-            'appointment-status':false,
           },
         },
       },
