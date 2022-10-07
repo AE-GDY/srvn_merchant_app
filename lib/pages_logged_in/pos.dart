@@ -465,7 +465,10 @@ class _PosState extends State<Pos> {
                                           SizedBox(height: 50,),
                                           ListTile(
                                             leading: buildLVerticalLine("Quick Sale"),
-                                            title: Text("Quick Sale"),
+                                            title: Text("Quick Sale",style: TextStyle(
+                                              fontWeight:  selectedInPos == "Quick Sale"?FontWeight.bold:
+                                              FontWeight.normal,
+                                            ),),
                                             onTap: (){
                                               setState(() {
                                                 selectingClient = false;
@@ -478,7 +481,10 @@ class _PosState extends State<Pos> {
                                           SizedBox(height: 5,),
                                           ListTile(
                                             leading: buildLVerticalLine("Clients"),
-                                            title: Text("Clients"),
+                                            title: Text("Clients",style: TextStyle(
+                                              fontWeight:  selectedInPos == "Clients"?FontWeight.bold:
+                                              FontWeight.normal,
+                                            ),),
                                             onTap: (){
                                               setState(() {
                                                 showClientNotSelected = false;
@@ -490,7 +496,10 @@ class _PosState extends State<Pos> {
                                           SizedBox(height: 5,),
                                           ListTile(
                                             leading: buildLVerticalLine("To Be Completed"),
-                                            title: Text("To Be Completed"),
+                                            title: Text("To Be Completed",style: TextStyle(
+                                              fontWeight:  selectedInPos == "To Be Completed"?FontWeight.bold:
+                                              FontWeight.normal,
+                                            ),),
                                             onTap: (){
                                               setState(() {
                                                 selectingClient = false;
@@ -503,7 +512,10 @@ class _PosState extends State<Pos> {
                                           SizedBox(height: 5,),
                                           ListTile(
                                             leading: buildLVerticalLine("Services"),
-                                            title: Text("Services"),
+                                            title: Text("Services",style: TextStyle(
+                                              fontWeight:  selectedInPos == "Services"?FontWeight.bold:
+                                              FontWeight.normal,
+                                            ),),
                                             onTap: (){
                                               setState(() {
                                                 selectingClient = false;
@@ -516,7 +528,10 @@ class _PosState extends State<Pos> {
                                           SizedBox(height: 5,),
                                           ListTile(
                                             leading: buildLVerticalLine("Products"),
-                                            title: Text("Products"),
+                                            title: Text("Products",style: TextStyle(
+                                              fontWeight:  selectedInPos == "Products"?FontWeight.bold:
+                                              FontWeight.normal,
+                                            ),),
                                             onTap: (){
                                               setState(() {
                                                 selectingClient = false;
@@ -529,7 +544,10 @@ class _PosState extends State<Pos> {
                                           SizedBox(height: 5,),
                                           ListTile(
                                             leading: buildLVerticalLine("Custom Amount"),
-                                            title: Text("Custom Amount"),
+                                            title: Text("Custom Amount",style: TextStyle(
+                                              fontWeight:  selectedInPos == "Custom Amount"?FontWeight.bold:
+                                              FontWeight.normal,
+                                            ),),
                                             onTap: (){
                                               setState(() {
                                                 selectingClient = false;
@@ -542,7 +560,10 @@ class _PosState extends State<Pos> {
                                           SizedBox(height: 5,),
                                           ListTile(
                                             leading: buildLVerticalLine("Gift Cards"),
-                                            title: Text("Gift Cards"),
+                                            title: Text("Gift Cards",style: TextStyle(
+                                              fontWeight:  selectedInPos == "Gift Cards"?FontWeight.bold:
+                                              FontWeight.normal,
+                                            ),),
                                             onTap: (){
                                               setState(() {
                                                 selectingClient = false;
@@ -568,7 +589,10 @@ class _PosState extends State<Pos> {
                                           SizedBox(height: 5,),
                                           ListTile(
                                             leading: buildLVerticalLine("Memberships"),
-                                            title: Text("Memberships"),
+                                            title: Text("Memberships",style: TextStyle(
+                                              fontWeight:  selectedInPos == "Memberships"?FontWeight.bold:
+                                              FontWeight.normal,
+                                            ),),
                                             onTap: (){
                                               setState(() {
                                                 selectingClient = false;
@@ -628,7 +652,7 @@ class _PosState extends State<Pos> {
                                   right: 160,
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: Colors.black,
+                                      color: cart.isEmpty?Colors.grey:Colors.deepPurple,
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     width: 200,
@@ -1074,7 +1098,7 @@ class _PosState extends State<Pos> {
 
                             });
                           },
-                          leading: VerticalDivider(color: Colors.blue,
+                          leading: VerticalDivider(color: Colors.deepPurple,
                             thickness: 2,),
                           title:  Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1306,7 +1330,7 @@ class _PosState extends State<Pos> {
 
                                     });
                                     },
-                                    leading: VerticalDivider(color: Colors.blue,
+                                    leading: VerticalDivider(color: Colors.deepPurple,
                                       thickness: 2,),
                                     title: Text(shopClients[index]),
                                   ),
@@ -1315,11 +1339,11 @@ class _PosState extends State<Pos> {
                         ),
                         Center(
                           child: Container(
-                            width: 150,
+                            width: 200,
                             height: 50,
                             decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(20),
+                              color: Colors.deepPurple,
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             child: TextButton(
                               onPressed: (){
@@ -1435,7 +1459,7 @@ class _PosState extends State<Pos> {
 
                               });
                             },
-                            leading: VerticalDivider(color: Colors.blue,
+                            leading: VerticalDivider(color: Colors.deepPurple,
                               thickness: 2,),
                             title: Row(
                               children: [
@@ -1450,9 +1474,9 @@ class _PosState extends State<Pos> {
               ),
               Container(
                 width: 150,
-                height: 40,
+                height: 50,
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.deepPurple,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: TextButton(
@@ -1771,7 +1795,7 @@ class _PosState extends State<Pos> {
 
                                       });
                                     },
-                                    leading: VerticalDivider(color: Colors.blue,
+                                    leading: VerticalDivider(color: Colors.deepPurple,
                                       thickness: 2,),
                                     title: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1916,7 +1940,7 @@ class _PosState extends State<Pos> {
 
 
                                     },
-                                    leading: VerticalDivider(color: Colors.blue,
+                                    leading: VerticalDivider(color: Colors.deepPurple,
                                       thickness: 2,),
                                     title: Text(shopMemberships[index]),
                                   ),

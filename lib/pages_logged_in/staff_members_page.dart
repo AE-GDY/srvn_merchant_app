@@ -340,7 +340,7 @@ class _StaffMembersPageState extends State<StaffMembersPage> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: Colors.green,
+                        color: Colors.deepPurple,
                         borderRadius: BorderRadius.circular(30),
                       ),
                       child: IconButton(
@@ -381,7 +381,7 @@ class _StaffMembersPageState extends State<StaffMembersPage> {
                         left: 150,
                         top: 220,
                         child: Container(
-                          width: 1000,
+                          width: MediaQuery.of(context).size.width * 0.8,
                           height: 500,
                           child: Card(
                             elevation: 2.0,
@@ -410,7 +410,7 @@ class _StaffMembersPageState extends State<StaffMembersPage> {
                                                 ),),
                                                 subtitle: Text(snapshot.data['$currentShopIndex']['staff-members']['$index']['member-role']),
                                               ),
-                                              width: 700,
+                                              width: MediaQuery.of(context).size.width * 0.6,
                                               height: 70,
                                             ),
                                             SizedBox(width: 10,),

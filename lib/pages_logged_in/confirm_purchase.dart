@@ -224,7 +224,7 @@ class _ConfirmPurchaseState extends State<ConfirmPurchase> {
                                 Navigator.pushNamed(context, '/POS');
 
                               },
-                              child: Text("Complete Transaction", style: TextStyle(
+                              child: Text("Complete Appointment", style: TextStyle(
                                 color: Colors.white,
                               ),),
                             ),

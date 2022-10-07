@@ -1030,13 +1030,13 @@ class _BookingScreenState extends State<BookingScreen> {
                           print("CURRENT EMPLOYEE: ${currentEmployeeIndex[cartIndex]}");
                         },
                         child: CircleAvatar(
-                          radius: 30.0,
+                          radius: 32.0,
                           backgroundColor: (currentEmployeeIndex[cartIndex] == index)?Colors.greenAccent: Colors.transparent,
                           child: CircleAvatar(
                             radius: 28.0,
                             backgroundColor: Colors.transparent,
                             child: ClipRRect(
-                              child: Image.asset('assets/no-profile-picture.jpg'),
+                              child: Image.asset('assets/no_profile_picture.jpg'),
                               borderRadius: BorderRadius.circular(60.0),
                             ),
                           ),

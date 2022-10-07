@@ -244,66 +244,65 @@ class _ProfileReadyState extends State<ProfileReady> {
                                 child: TextButton(
                                   onPressed: () async {
 
-
-                                    // Adds initial shop data
-                                    await databaseService.addShop(
-                                        selectedCategory,
-                                        shopName,
-                                        snapshot.data['total-shop-amount']+1,
-                                        timePicked.year,
-                                        timePicked.month,
-                                        timePicked.day
-                                    );
-
-                                    // Adds Staff Members
-                                    int staffIdx = 0;
-                                    while(staffIdx < staffMembers.length){
-                                      await databaseService.addStaffMembers(
-                                        selectedCategory,
-                                        staffIdx!= 0?serviceStaffMembers[staffIdx-1]:{},
-                                        snapshot.data['total-shop-amount']+1,
-                                        staffIdx,
+                                    if(_image1 != null && logo1 != null){
+                                      // Adds initial shop data
+                                      await databaseService.addShop(
+                                          selectedCategory,
+                                          shopName,
+                                          snapshot.data['total-shop-amount']+1,
+                                          timePicked.year,
+                                          timePicked.month,
+                                          timePicked.day
                                       );
-                                      staffIdx++;
-                                    }
 
-                                    // Adds services
-                                    int serviceIdx = 0;
-                                    while(serviceIdx < services.length){
-                                      await databaseService.addServices(
-                                        selectedCategory,
-                                        snapshot.data['total-shop-amount']+1,
-                                        serviceIdx,
-                                        services[serviceIdx].gap,
-                                        services[serviceIdx].maxBookings,
-                                        services[serviceIdx].maxBookings == 1?false:true,
-                                      );
-                                      serviceIdx++;
-                                    }
-
-
-                                    if (_image1 != null) {
-
-                                      int imageIndex = 0;
-                                      String? downloadURL;
-
-                                      final imgId = DateTime.now().millisecondsSinceEpoch.toString();
-
-                                      firebase_storage.Reference reference = firebase_storage.FirebaseStorage.instance.refFromURL('gs://servnn.appspot.com/$selectedCategory/$currentShopIndex/images').child('post_$imgId');
-
-                                      firebase_storage.TaskSnapshot uploadTask = await reference.putData(_image2, firebase_storage.SettableMetadata(contentType: 'image/jpeg'));
-
-                                      downloadURL = await uploadTask.ref.getDownloadURL();
-
-
-                                      if (uploadTask.state == firebase_storage.TaskState.success) {
-                                        print('done');
-                                        print('URL: $downloadURL');
-                                      } else {
-                                        print(uploadTask.state);
+                                      // Adds Staff Members
+                                      int staffIdx = 0;
+                                      while(staffIdx < staffMembers.length){
+                                        await databaseService.addStaffMembers(
+                                          selectedCategory,
+                                          staffIdx!= 0?serviceStaffMembers[staffIdx-1]:{},
+                                          snapshot.data['total-shop-amount']+1,
+                                          staffIdx,
+                                        );
+                                        staffIdx++;
                                       }
 
-                                      await databaseService.uploadImage(
+                                      // Adds services
+                                      int serviceIdx = 0;
+                                      while(serviceIdx < services.length){
+                                        await databaseService.addServices(
+                                          selectedCategory,
+                                          snapshot.data['total-shop-amount']+1,
+                                          serviceIdx,
+                                          services[serviceIdx].gap,
+                                          services[serviceIdx].maxBookings,
+                                          services[serviceIdx].maxBookings == 1?false:true,
+                                        );
+                                        serviceIdx++;
+                                      }
+
+                                      if (_image1 != null) {
+
+                                        int imageIndex = 0;
+                                        String? downloadURL;
+
+                                        final imgId = DateTime.now().millisecondsSinceEpoch.toString();
+
+                                        firebase_storage.Reference reference = firebase_storage.FirebaseStorage.instance.refFromURL('gs://servnn.appspot.com/$selectedCategory/$currentShopIndex/images').child('post_$imgId');
+
+                                        firebase_storage.TaskSnapshot uploadTask = await reference.putData(_image2, firebase_storage.SettableMetadata(contentType: 'image/jpeg'));
+
+                                        downloadURL = await uploadTask.ref.getDownloadURL();
+
+
+                                        if (uploadTask.state == firebase_storage.TaskState.success) {
+                                          print('done');
+                                          print('URL: $downloadURL');
+                                        } else {
+                                          print(uploadTask.state);
+                                        }
+
+                                        await databaseService.uploadImage(
                                           selectedCategory,
                                           snapshot.data['total-shop-amount']+1,
                                           imageIndex,
@@ -311,49 +310,47 @@ class _ProfileReadyState extends State<ProfileReady> {
                                           downloadURL,
                                           false,
                                           imageIndex+1,
-                                      );
-
-                                    }
-
-                                    if(logo1 != null){
-                                      int imageIndex = 0;
-                                      String? downloadURL;
-
-                                      final imgId = DateTime.now().millisecondsSinceEpoch.toString();
-
-                                      firebase_storage.Reference reference = firebase_storage.FirebaseStorage.instance.refFromURL('gs://servnn.appspot.com/$selectedCategory/$currentShopIndex/images').child('post_$imgId');
-
-                                      firebase_storage.TaskSnapshot uploadTask = await reference.putData(logo2, firebase_storage.SettableMetadata(contentType: 'image/jpeg'));
-
-                                      downloadURL = await uploadTask.ref.getDownloadURL();
-
-
-                                      if (uploadTask.state == firebase_storage.TaskState.success) {
-                                        print('done');
-                                        print('URL: $downloadURL');
-                                      } else {
-                                        print(uploadTask.state);
+                                        );
                                       }
 
-                                      await databaseService.uploadImage(
-                                        selectedCategory,
-                                        snapshot.data['total-shop-amount']+1,
-                                        -1,
-                                        logo2,
-                                        downloadURL,
-                                        false,
-                                        imageIndex+1,
-                                      );
+                                      if(logo1 != null){
+                                        int imageIndex = 0;
+                                        String? downloadURL;
+
+                                        final imgId = DateTime.now().millisecondsSinceEpoch.toString();
+
+                                        firebase_storage.Reference reference = firebase_storage.FirebaseStorage.instance.refFromURL('gs://servnn.appspot.com/$selectedCategory/$currentShopIndex/images').child('post_$imgId');
+
+                                        firebase_storage.TaskSnapshot uploadTask = await reference.putData(logo2, firebase_storage.SettableMetadata(contentType: 'image/jpeg'));
+
+                                        downloadURL = await uploadTask.ref.getDownloadURL();
+
+
+                                        if (uploadTask.state == firebase_storage.TaskState.success) {
+                                          print('done');
+                                          print('URL: $downloadURL');
+                                        } else {
+                                          print(uploadTask.state);
+                                        }
+
+                                        await databaseService.uploadImage(
+                                          selectedCategory,
+                                          snapshot.data['total-shop-amount']+1,
+                                          -1,
+                                          logo2,
+                                          downloadURL,
+                                          false,
+                                          imageIndex+1,
+                                        );
+                                      }
+
+                                      // Sets the current logged in shop's index
+                                      setState(() {
+                                        currentShopIndex = snapshot.data['total-shop-amount'] + 1;
+                                      });
+
+                                      Navigator.pushNamed(context, '/dashboard');
                                     }
-
-
-
-                                    // Sets the current logged in shop's index
-                                    setState(() {
-                                      currentShopIndex = snapshot.data['total-shop-amount'] + 1;
-                                    });
-
-                                    Navigator.pushNamed(context, '/dashboard');
                                   },
                                   child: Text("Continue", style: TextStyle(
                                     color: Colors.white,

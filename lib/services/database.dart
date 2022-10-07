@@ -25,6 +25,7 @@ class DatabaseService{
         'user-amount': 0,
         'users':{
           '${0}':{
+            'admin': true,
             'name': adminName,
             'email': userName,
             'password': password,

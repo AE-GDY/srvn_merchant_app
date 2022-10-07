@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
 import '../constants.dart';
 
 
@@ -438,8 +437,12 @@ class _SettingsState extends State<Settings> {
                                                   borderRadius: BorderRadius.circular(10),
                                                 ),
                                                 child: TextButton(
-                                                  onPressed: (){},
-                                                  child: Text("Edit",style: TextStyle(
+                                                  onPressed: (){
+
+                                                  },
+                                                  child: Text(
+                                                    snapshot.data['$currentShopIndex']['users']['$currentUserIndex']['admin']?
+                                                    "Edit Users":'Edit',style: TextStyle(
                                                     color: Colors.white,
                                                   ),
                                                   ),

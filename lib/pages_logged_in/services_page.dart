@@ -332,7 +332,7 @@ class _ServicesPageState extends State<ServicesPage> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: Colors.green,
+                        color: Colors.deepPurple,
                         borderRadius: BorderRadius.circular(30),
                       ),
                       child: IconButton(
@@ -374,7 +374,7 @@ class _ServicesPageState extends State<ServicesPage> {
                         top: 220,
                         child: Container(
                           margin: EdgeInsets.all(10),
-                          width: 1000,
+                          width: MediaQuery.of(context).size.width * 0.8,
                           height: 500,
                           child: Card(
                             elevation: 2.0,
@@ -393,7 +393,7 @@ class _ServicesPageState extends State<ServicesPage> {
                                         children: [
                                           Container(
                                             child: ListTile(
-                                              leading: VerticalDivider(color: Colors.blue,),
+                                              leading: VerticalDivider(color: Colors.deepPurple,thickness: 2,),
                                               title: Text(snapshot.data['$currentShopIndex']['services']['$index']['service-name'],style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                               ),),
@@ -402,53 +402,57 @@ class _ServicesPageState extends State<ServicesPage> {
                                                 fontWeight: FontWeight.bold,
                                               ),) ,
                                             ),
-                                            width: 600,
+                                            width: MediaQuery.of(context).size.width * 0.6,
                                             height: 70,
                                           ),
                                           SizedBox(width: 10,),
 
-                                          Container(
-                                            width: 100,
-                                            height: 40,
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(10),
-                                              color: Colors.green,
-                                            ),
-                                            child: TextButton(
-                                              onPressed: (){
-                                                selectedIdx = index;
-                                                Navigator.pushNamed(context, '/edit-service');
+                                          Expanded(
+                                            child: Container(
+                                              width: 100,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(10),
+                                                color: Colors.green,
+                                              ),
+                                              child: TextButton(
+                                                onPressed: (){
+                                                  selectedIdx = index;
+                                                  Navigator.pushNamed(context, '/edit-service');
 
-                                              },
-                                              child: Text("Edit", style: TextStyle(
-                                                color: Colors.white,
-                                              ),),
+                                                },
+                                                child: Text("Edit", style: TextStyle(
+                                                  color: Colors.white,
+                                                ),),
+                                              ),
                                             ),
                                           ),
 
                                           SizedBox(width: 5,),
-                                          Container(
-                                            width: 100,
-                                            height: 40,
-                                            decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(10),
-                                              color: Colors.red,
-                                            ),
-                                            child: TextButton(
-                                              onPressed: (){
+                                          Expanded(
+                                            child:Container(
+                                              width: 100,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(10),
+                                                color: Colors.red,
+                                              ),
+                                              child: TextButton(
+                                                onPressed: (){
 
-                                                selectedIdx = index;
+                                                  selectedIdx = index;
 
-                                                serviceNameToBeEdited = snapshot.data['$currentShopIndex']['services']['$index']['service-name'];
-                                                serviceDurationToBeEdited = '${snapshot.data['$currentShopIndex']['services']['$index']['service-hours']} ${snapshot.data['$currentShopIndex']['services']['$index']['service-minutes']}';
-                                                servicePriceToBeEdited = snapshot.data['$currentShopIndex']['services']['$index']['service-price'];
+                                                  serviceNameToBeEdited = snapshot.data['$currentShopIndex']['services']['$index']['service-name'];
+                                                  serviceDurationToBeEdited = '${snapshot.data['$currentShopIndex']['services']['$index']['service-hours']} ${snapshot.data['$currentShopIndex']['services']['$index']['service-minutes']}';
+                                                  servicePriceToBeEdited = snapshot.data['$currentShopIndex']['services']['$index']['service-price'];
 
-                                                Navigator.pushNamed(context, '/delete-service');
+                                                  Navigator.pushNamed(context, '/delete-service');
 
-                                              },
-                                              child: Text("Delete", style: TextStyle(
-                                                color: Colors.white,
-                                              ),),
+                                                },
+                                                child: Text("Delete", style: TextStyle(
+                                                  color: Colors.white,
+                                                ),),
+                                              ),
                                             ),
                                           ),
 

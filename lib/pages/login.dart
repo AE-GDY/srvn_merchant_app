@@ -230,6 +230,9 @@ class _LoginState extends State<Login> {
                                   'Barbershop',
                                   'Hair Salon',
                                   'Spa',
+                                  'Gym',
+                                  'Pet Services',
+                                  'Car Wash',
                                 ]
                                     .map<DropdownMenuItem<String>>((String value) {
                                   return DropdownMenuItem<String>(
@@ -334,6 +337,8 @@ class _LoginState extends State<Login> {
                                                   if(snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['start-day'] <= DateTime.now().day){
                                                     if(snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['start-month'] <= DateTime.now().month){
                                                       if(snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['start-year'] <= DateTime.now().year) {
+
+                                                        print('HOUR NOW ${DateTime.now().hour}');
 
                                                         if(snapshot.data[0]['$currentShopIndex']['appointments']['$appointmentIndex']['start-hour-actual'] < DateTime.now().hour){
 
