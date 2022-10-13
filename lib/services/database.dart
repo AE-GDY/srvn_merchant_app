@@ -497,6 +497,7 @@ class DatabaseService{
       int currentShopIdx,
       String clientName,
       String clientEmail,
+      String phoneNumber,
       ) async {
     return await shops.doc(category).set({
       '$currentShopIdx' : {
@@ -506,6 +507,7 @@ class DatabaseService{
             'type': 'new',
             'name': clientName,
             'email': clientEmail,
+            'phone': phoneNumber,
             'month': months[DateTime.now().month - 1],
             'amount-paid': 0,
             'appointments': 0,
@@ -874,6 +876,8 @@ class DatabaseService{
             'credit': services[serviceIndex].credit,
             'cash': services[serviceIndex].cash,
             'both': services[serviceIndex].both,
+            'members-only': services[serviceIndex].membersOnly,
+            'requires-confirmation': services[serviceIndex].requiresConfirmation,
 
             'flash-promotions-amount': 0,
             'last-minute-promotions-amount': 0,
@@ -1067,6 +1071,12 @@ class DatabaseService{
       String serviceHours,
       String serviceMinutes,
       String servicePrice,
+      bool both,
+      bool cash,
+      bool credit,
+      int minuteGap,
+      bool membersOnly,
+      bool requiresConfirmation,
       ) async {
     return await shops.doc(category).set({
       '$currentShopIdx' : {
@@ -1076,6 +1086,12 @@ class DatabaseService{
             'service-hours': serviceHours,
             'service-minutes': serviceMinutes,
             'service-price': servicePrice,
+            'both': both,
+            'cash': cash,
+            'credit': credit,
+            'minute-gap': minuteGap,
+            'members-only': membersOnly,
+            'requires-confirmation': requiresConfirmation,
           },
         },
       },

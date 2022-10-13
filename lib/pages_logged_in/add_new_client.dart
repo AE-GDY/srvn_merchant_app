@@ -94,6 +94,7 @@ class _AddClientState extends State<AddClient> {
                                     currentShopIndex,
                                     clientNameController.text,
                                     clientEmailController.text,
+                                    clientNumberController.text,
                                   );
 
                                   Navigator.pushNamed(context, '/POS');

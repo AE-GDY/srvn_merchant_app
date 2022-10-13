@@ -22,6 +22,9 @@ class _ServiceDetailsState extends State<ServiceDetails> {
 
   int numberOfBookings = 1;
 
+  bool membersOnly = false;
+  bool requiresConfirmation = false;
+
   bool both = true;
   bool credit = false;
   bool cash = false;
@@ -45,7 +48,7 @@ class _ServiceDetailsState extends State<ServiceDetails> {
         physics: ScrollPhysics(),
         child: Container(
           width: 1500,
-          height: 1000,
+          height: 1200,
           child: Column(
             children: [
               SizedBox(height: 20,),
@@ -53,15 +56,49 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                 elevation: 2.0,
                 child: Container(
                   width: 450,
-                  height: 900,
+                  height: 1000,
                   margin: EdgeInsets.all(10),
                   child: Column(
                     children: [
                       SizedBox(height: 20,),
-                      Text("Service Information",style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),),
+                      SizedBox(height: 20,),
+                      Container(
+                        alignment: Alignment.center,
+                        child: ListTile(
+                          leading: Switch(
+                            activeColor: Colors.deepPurple,
+                            value: membersOnly,
+                            onChanged: (bool value) {
+                              setState(() {
+                                membersOnly = !membersOnly;
+                              });
+                            },
+
+                          ),
+                          title: Text('Members Only', style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),),
+                        ),
+                      ),
+
+                      Container(
+                        alignment: Alignment.center,
+                        child: ListTile(
+                          leading: Switch(
+                            activeColor: Colors.deepPurple,
+                            value: requiresConfirmation,
+                            onChanged: (bool value) {
+                              setState(() {
+                                requiresConfirmation = !requiresConfirmation;
+                              });
+                            },
+
+                          ),
+                          title: Text('Requires Confirmation', style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),),
+                        ),
+                      ),
                       SizedBox(height: 20,),
                       TextField(
                         controller: serviceTitleController,
@@ -307,6 +344,8 @@ class _ServiceDetailsState extends State<ServiceDetails> {
                               cash: cash,
                               credit: credit,
                               both: both,
+                              membersOnly: membersOnly,
+                              requiresConfirmation: requiresConfirmation,
 
                             );
 

@@ -8,10 +8,11 @@ class Service{
   String price;
   int maxBookings;
   int gap;
-
   bool credit;
   bool cash;
   bool both;
+  bool membersOnly;
+  bool requiresConfirmation;
 
   Service({
     required this.title,
@@ -23,6 +24,8 @@ class Service{
     required this.credit,
     required this.cash,
     required this.both,
+    required this.membersOnly,
+    required this.requiresConfirmation,
 });
 }
 

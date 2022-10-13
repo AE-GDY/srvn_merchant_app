@@ -21,10 +21,19 @@ class _EditServiceState extends State<EditService> {
   }
 
 
+  String gap = '15';
   TextEditingController serviceTitleController = TextEditingController();
   TextEditingController servicePriceController = TextEditingController();
+
+  bool membersOnly = false;
+  bool requiresConfirmation = false;
+
   String hours = '0h';
   String minutes = '0min';
+
+  bool both = true;
+  bool credit = false;
+  bool cash = false;
 
   DatabaseService databaseService = DatabaseService();
 
@@ -60,7 +69,7 @@ class _EditServiceState extends State<EditService> {
         physics: ScrollPhysics(),
         child: Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height * 2,
           child: Column(
             children: [
 
@@ -69,15 +78,49 @@ class _EditServiceState extends State<EditService> {
               Center(
                 child: Container(
                   width: 600,
-                  height: 500,
+                  height: 900,
                   child: Card(
                     elevation: 1.0,
                     child: Column(
                       children: [
                         SizedBox(height: 20,),
-                        Text("Service Information", style: TextStyle(
-                          fontSize: 20,
-                        ),),
+                        Container(
+                          alignment: Alignment.center,
+                          child: ListTile(
+                            leading: Switch(
+                              activeColor: Colors.deepPurple,
+                              value: membersOnly,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  membersOnly = !membersOnly;
+                                });
+                              },
+
+                            ),
+                            title: Text('Members Only', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),),
+                          ),
+                        ),
+
+                        Container(
+                          alignment: Alignment.center,
+                          child: ListTile(
+                            leading: Switch(
+                              activeColor: Colors.deepPurple,
+                              value: requiresConfirmation,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  requiresConfirmation = !requiresConfirmation;
+                                });
+                              },
+
+                            ),
+                            title: Text('Requires Confirmation', style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),),
+                          ),
+                        ),
                         SizedBox(height: 20,),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -105,6 +148,7 @@ class _EditServiceState extends State<EditService> {
                           alignment: Alignment.center,
                           child: Text("Service duration", style: TextStyle(
                             fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),),
                         ),
                         SizedBox(height: 30,),
@@ -162,7 +206,106 @@ class _EditServiceState extends State<EditService> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 40,),
+
+                        SizedBox(height: 30,),
+
+                        Text("Gap Between Time Slots (minutes)", style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),),
+                        SizedBox(height: 10,),
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black, width: 1.0),
+                          ),
+                          width: 100,
+                          height: 50,
+                          child: DropdownButton<String>(
+                            value: gap,
+                            //icon: const Icon(Icons.arrow_downward),
+                            elevation: 16,
+                            //style: const TextStyle(color: Colors.deepPurple),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                gap = newValue!;
+                              });
+                            },
+                            items: <String>['5','10','15','30','60']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+
+                        SizedBox(height: 30,),
+
+                        Text("Accepted Payment Methods", style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),),
+
+                        SizedBox(height: 10,),
+
+
+                        Center(
+                          child: ListTile(
+                            leading: Switch(
+                              activeColor: Colors.deepPurple,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  both = !both;
+
+                                  credit = false;
+                                  cash = false;
+
+                                });
+                              },
+                              value: both,
+
+                            ),
+                            title: Text("Credit Card and Cash"),
+                          ),
+                        ),
+
+                        SizedBox(height: 5,),
+
+                        ListTile(
+                          leading: Switch(
+                            activeColor: Colors.deepPurple,
+                            onChanged: (bool value) {
+                              setState(() {
+                                credit = !credit;
+                                both = false;
+                              });
+                            },
+                            value: credit,
+
+                          ),
+                          title: Text("Credit Card Only"),
+                        ),
+
+                        SizedBox(height: 5,),
+
+
+                        ListTile(
+                          leading: Switch(
+                            activeColor: Colors.deepPurple,
+                            onChanged: (bool value) {
+                              setState(() {
+                                cash = !cash;
+                                both = false;
+                              });
+                            },
+                            value: cash,
+
+                          ),
+                          title: Text("Cash Only"),
+                        ),
+
+                        SizedBox(height: 20,),
                         FutureBuilder(
                           future: categoryData(),
                           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
@@ -172,11 +315,11 @@ class _EditServiceState extends State<EditService> {
                               }
                               else if(snapshot.hasData){
                                 return Container(
-                                  width: 200,
+                                  width: 300,
                                   height: 50,
                                   decoration: BoxDecoration(
-                                    color: Colors.blue,
-                                    borderRadius: BorderRadius.circular(20),
+                                    color: Colors.deepPurple,
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: TextButton(
                                     onPressed: () async{
@@ -188,6 +331,12 @@ class _EditServiceState extends State<EditService> {
                                         hours,
                                         minutes,
                                         servicePriceController.text,
+                                        both,
+                                        cash,
+                                        credit,
+                                        int.parse(gap),
+                                        membersOnly,
+                                        requiresConfirmation,
                                       );
 
 

@@ -10,7 +10,7 @@ class BusinessCategory extends StatefulWidget {
 }
 
 class _BusinessCategoryState extends State<BusinessCategory> {
-  List<bool> isChecked = [false,false,false,false];
+  List<bool> isChecked = [false,false,false,false,false,false];
 
   @override
   Widget build(BuildContext context) {
