@@ -270,6 +270,41 @@ class DatabaseService{
     );
   }
 
+  Future confirmAppointment(
+      String category,
+      int currentShopIdx,
+      int appointmentIndex,
+
+      ) async {
+    return await shops.doc(category).set({
+      '$currentShopIdx' : {
+        'appointments':{
+          '$appointmentIndex':{
+            'appointment-status': 'incomplete',
+          },
+        },
+      },
+    },SetOptions(merge: true),
+    );
+  }
+
+  Future confirmAppointmentForUser(
+      int userIndex,
+      int appointmentIndex,
+
+      ) async {
+    return await users.doc("signed-up").set({
+      '$userIndex' : {
+        'appointments':{
+          '$appointmentIndex':{
+            'pending-confirmation': false,
+          },
+        },
+      },
+    },SetOptions(merge: true),
+    );
+  }
+
   Future appointmentComplete(
       String category,
       int currentShopIdx,

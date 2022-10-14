@@ -26,6 +26,8 @@ class _DashBoardState extends State<DashBoard> {
   bool dayChanged = false;
 
 
+  DatabaseService databaseService = DatabaseService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -316,7 +318,7 @@ class _DashBoardState extends State<DashBoard> {
                         top: 50,
                         left: 70,
                         child: Container(
-                          width: 700,
+                          width: 600,
                           height: 500,
                           child: Card(
                             elevation: 2.0,
@@ -333,9 +335,9 @@ class _DashBoardState extends State<DashBoard> {
 
           Positioned(
             top: 50,
-            left: 780,
+            left: 680,
             child: Container(
-              width: 500,
+              width: 600,
               height: 500,
               child: Card(
                 elevation: 2.0,
@@ -350,7 +352,7 @@ class _DashBoardState extends State<DashBoard> {
 
 
                       Container(
-                        width: 400,
+                        width: 600,
                         height: 400,
                         child: ListView.builder(
                             itemCount: appointmentData.length,
@@ -403,19 +405,111 @@ class _DashBoardState extends State<DashBoard> {
                                   endTime = '${appointmentData[index].to.hour}:$minute AM';
                                 }
 
-                                return ListTile(
-                                  leading: VerticalDivider(color: Colors.blue,),
-                                  title: Text(appointmentData[index].eventName),
-                                  subtitle: Text("${appointmentData[index].startTime}-${appointmentData[index].endTime}"),
-                                  trailing: Column(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text("Client Name"),
-                                      Text(appointmentData[index].clientName, style: TextStyle(
-                                        color: Colors.grey,
-                                      ),),
-                                    ],
+                                return Container(
+                                  margin: EdgeInsets.all(10),
+                                  child: ListTile(
+                                    leading: Container(
+                                      width: 180,
+                                      child: Row(
+                                        children: [
+                                          VerticalDivider(color: Colors.blue,),
+                                          SizedBox(width: 5,),
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Container(child: Text(appointmentData[index].eventName,style: TextStyle(
+                                                fontSize: 16,
+                                              ),)),
+                                              Text("${appointmentData[index].startTime}-${appointmentData[index].endTime}",style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.grey,
+                                              ),),
+                                            ],
+                                          ),
+
+                                        ],
+                                      ),
+                                    ),
+                                    trailing: Container(
+                                      width: 360,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text("Client Name"),
+                                              Text(appointmentData[index].clientName, style: TextStyle(
+                                                color: Colors.grey,
+                                              ),),
+                                            ],
+                                          ),
+
+                                          Container(
+                                            margin: EdgeInsets.only(left: 10,right: 10),
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.end,
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text("Client Number"),
+                                                Text(appointmentData[index].phoneNumber, style: TextStyle(
+                                                  color: Colors.grey,
+                                                ),),
+                                              ],
+                                            ),
+                                          ),
+
+                                          appointmentData[index].requiresConfirmation == 'pending-confirmation'?Container(
+                                            width: 150,
+                                            height: 40,
+                                            decoration: BoxDecoration(
+                                              color: Colors.deepOrange,
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            child: TextButton(
+                                              onPressed: () async {
+
+                                                setState(() async {
+                                                  await databaseService.confirmAppointment(
+                                                    selectedCategory,
+                                                    currentShopIndex,
+                                                    appointmentData[index].appointmentIndex,
+                                                  );
+
+                                                  await databaseService.confirmAppointmentForUser(
+                                                      appointmentData[index].userIndex,
+                                                      appointmentData[index].userAppointmentIndex
+                                                  );
+
+                                                });
+
+
+                                              },
+                                              child: Text('Confirm Booking', style: TextStyle(
+                                                color: Colors.white,
+                                              ),),
+                                            ),
+                                          ):Container(
+                                            width: 150,
+                                            height: 40,
+                                            decoration: BoxDecoration(
+                                              color: Colors.green,
+                                              borderRadius: BorderRadius.circular(10),
+                                            ),
+                                            child: TextButton(
+                                              onPressed: (){
+
+                                              },
+                                              child: Text('Confirmed', style: TextStyle(
+                                                color: Colors.white,
+                                              ),),
+                                            ),
+                                          ),
+
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 );
                               }
@@ -510,8 +604,13 @@ class MeetingDataSource extends CalendarDataSource {
 List<Meeting> appointmentData = [];
 
 class Meeting {
-  Meeting(this.eventName,this.clientName, this.startTime, this.endTime,this.from, this.to, this.background, this.isAllDay);
+  Meeting(this.userAppointmentIndex,this.userIndex,this.appointmentIndex,this.phoneNumber,this.requiresConfirmation,this.eventName,this.clientName, this.startTime, this.endTime,this.from, this.to, this.background, this.isAllDay);
 
+  int userIndex;
+  int userAppointmentIndex;
+  int appointmentIndex;
+  String requiresConfirmation;
+  String phoneNumber;
   String eventName;
   String clientName;
   String startTime;
@@ -527,7 +626,8 @@ List<Meeting> _getDataSource(AsyncSnapshot<dynamic> snapshot) {
   int appointmentIndex = 0;
   while(appointmentIndex < snapshot.data['$currentShopIndex']['appointments']['appointment-amount']+1){
 
-    if(snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['appointment-status'] == 'incomplete'){
+    if(snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['appointment-status'] == 'incomplete'
+    || snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['appointment-status'] == 'pending-confirmation'){
       final DateTime today = DateTime.now();
       final DateTime startTime = DateTime(
           snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['start-year'],
@@ -547,7 +647,13 @@ List<Meeting> _getDataSource(AsyncSnapshot<dynamic> snapshot) {
         0,
       );
 
-      meetings.add(Meeting(snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['service-name'],
+      meetings.add(Meeting(
+          snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['user-appointment-index'],
+          snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['user-index'],
+          appointmentIndex,
+          snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['client-number'],
+          snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['appointment-status'],
+          snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['service-name'],
           snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['client-name'],
           snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['start-time'],
           snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['end-time'],
@@ -556,7 +662,13 @@ List<Meeting> _getDataSource(AsyncSnapshot<dynamic> snapshot) {
           const Color(0xFF0F8644), false));
 
 
-      appointmentData.add(Meeting(snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['service-name'],
+      appointmentData.add(Meeting(
+          snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['user-appointment-index'],
+          snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['user-index'],
+          appointmentIndex,
+          snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['client-number'],
+          snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['appointment-status'],
+          snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['service-name'],
           snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['client-name'],
           snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['start-time'],
           snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['end-time'],
