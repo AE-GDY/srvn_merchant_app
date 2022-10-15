@@ -386,7 +386,7 @@ class _MarketingState extends State<Marketing> {
                         SizedBox(height: 50,),
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.blue,
+                            color: Colors.deepPurple,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           width: 200,
@@ -528,7 +528,7 @@ class _MarketingState extends State<Marketing> {
                         SizedBox(height: 50,),
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.blue,
+                            color: Colors.deepPurple,
                             borderRadius: BorderRadius.circular(10),
                           ),
                           width: 200,

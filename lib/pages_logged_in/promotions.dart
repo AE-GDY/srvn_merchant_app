@@ -23,6 +23,8 @@ class _AddPromotionState extends State<AddPromotion> {
   String selectedType = "Services";
 
 
+  String message = "";
+
   String selectedItem = "All Services";
 
   // Keeps track of which type of promotion to add
@@ -206,7 +208,7 @@ class _AddPromotionState extends State<AddPromotion> {
                         width: 200,
                         height: 50,
                         decoration: BoxDecoration(
-                          color: selectedPromotionType == "Flash Sale"?Colors.green:Colors.grey,
+                          color: selectedPromotionType == "Flash Sale"?Colors.deepPurple:Colors.grey,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: TextButton(
@@ -225,7 +227,7 @@ class _AddPromotionState extends State<AddPromotion> {
                         width: 200,
                         height: 50,
                         decoration: BoxDecoration(
-                          color: selectedPromotionType == "Last Minute Discount"?Colors.green:Colors.grey,
+                          color: selectedPromotionType == "Last Minute Discount"?Colors.deepPurple:Colors.grey,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: TextButton(
@@ -244,7 +246,7 @@ class _AddPromotionState extends State<AddPromotion> {
                         width: 200,
                         height: 50,
                         decoration: BoxDecoration(
-                          color: selectedPromotionType == "Happy Hours"?Colors.green:Colors.grey,
+                          color: selectedPromotionType == "Happy Hours"?Colors.deepPurple:Colors.grey,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: TextButton(
@@ -324,13 +326,14 @@ class _AddPromotionState extends State<AddPromotion> {
                             }
 
                             return Container(
-                              width: 200,
+                              width: 300,
                               height: 280,
                               child: ListView.builder(
                                   itemCount: dropDownItems.length,
                                   itemBuilder: (context,index){
                                     return ListTile(
                                       leading: Switch(
+                                        activeColor: Colors.deepPurple,
                                         value: selectedServices[index],
                                         onChanged: (bool value) {
                                           setState(() {
@@ -400,6 +403,10 @@ class _AddPromotionState extends State<AddPromotion> {
 
                   buildBody(),
 
+                  Center(
+                    child: buildError(),
+                  ),
+
                   FutureBuilder(
                       future: categoryData(),
                       builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>?> snapshot) {
@@ -415,10 +422,10 @@ class _AddPromotionState extends State<AddPromotion> {
 
                             return Center(
                               child: Container(
-                                width: 250,
+                                width: 300,
                                 height: 50,
                                 decoration: BoxDecoration(
-                                  color: Colors.green,
+                                  color: Colors.deepPurple,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: TextButton(
@@ -426,44 +433,151 @@ class _AddPromotionState extends State<AddPromotion> {
 
                                     if(selectedPromotionType == "Flash Sale"){
 
-                                      int serviceIndex = 0;
 
-                                      if(selectedServices[0] == true){
-                                        while(serviceIndex < selectedServices.length - 1){
+                                      bool datesAreValid = true;
 
-                                          int newPromotionAmount = snapshot.data!['$currentShopIndex']['services']['$serviceIndex']['flash-promotions-amount'];
+                                      // CONVERTS START AND END MONTH TO INTEGERS
 
-                                          await databaseService.addFlashPromotion(
-                                              selectedCategory,
-                                              currentShopIndex,
-                                              serviceIndex,
-                                              newPromotionAmount,
-                                              salePeriod,
-                                              '$discount',
-                                              selectedPromotionType,
-                                              startDay,
-                                              endDay,
-                                              startMonth,
-                                              endMonth,
-                                              startYear,
-                                              endYear
-                                          );
-
-                                          serviceIndex++;
+                                      int startMonthInt = 0;
+                                      while(startMonthInt < months.length){
+                                        if(startMonth == months[startMonthInt]){
+                                          startMonthInt++;
+                                          break;
                                         }
+                                        startMonthInt++;
+                                      }
+
+                                      int endMonthInt = 0;
+                                      while(endMonthInt < months.length){
+                                        if(startMonth == months[endMonthInt]){
+                                          endMonthInt++;
+                                          break;
+                                        }
+                                        endMonthInt++;
+                                      }
+
+
+
+                                      // CHECKS IF START DATE IS VALID
+                                      if(int.parse(startYear) < DateTime.now().year){
+                                        setState(() {
+                                          message = "Start year is smaller than present year";
+                                        });
+                                        datesAreValid = false;
                                       }
                                       else{
-                                        serviceIndex = 1;
-                                        while(serviceIndex < selectedServices.length){
 
-                                          if(selectedServices[serviceIndex] == true){
+                                        if(int.parse(startYear) == DateTime.now().year){
 
-                                            int newPromotionAmount = snapshot.data!['$currentShopIndex']['services']['${serviceIndex-1}']['flash-promotions-amount'];
+                                          if(startMonthInt < DateTime.now().month){
+                                            setState(() {
+                                              message = "Start month is smaller than present month";
+                                            });
+                                            datesAreValid = false;
+                                          }
+                                          else{
+                                            if(startMonthInt == DateTime.now().month && int.parse(startDay) < DateTime.now().day){
+                                              setState(() {
+                                                message = "Start day is smaller than today";
+                                              });
+                                              datesAreValid = false;
+                                            }
+                                          }
+                                        }
+                                      }
+
+
+                                      // CHECKS IF END DATE IS SMALLER THAN START DATE
+
+                                      bool endDateGreater = true;
+
+                                      if(datesAreValid){
+                                        if(int.parse(endYear) >= int.parse(startYear)){
+                                          if(endMonthInt >= startMonthInt){
+                                            if(int.parse(endDay) >= int.parse(startDay)){
+                                              endDateGreater = false;
+                                            }
+                                          }
+                                        }
+                                      }
+
+                                      if(endDateGreater){
+                                        setState(() {
+                                          message = "Start date is greater than end date";
+                                        });
+                                        datesAreValid = false;
+                                      }
+
+                                      // CHECKS IF DURATION PERIOD IS EQUAL TO DIFFERENCE BETWEEN DATES
+
+                                      if(datesAreValid){
+                                        int durationInt = 0;
+
+                                        if(salePeriod == 'Today Only'){
+                                          durationInt = 1;
+
+                                          bool datesEqual = false;
+
+                                          if(startDay == endDay){
+                                            if(startMonth == endMonth){
+                                              if(startYear == endYear){
+                                                datesEqual == true;
+                                              }
+                                            }
+                                          }
+
+                                          if(!datesEqual){
+                                            setState(() {
+                                              message = "Sale period is not equal to period between dates";
+                                            });
+                                            datesAreValid = false;
+                                          }
+
+                                        }
+                                        else{
+                                          String durationString = '';
+                                          int salePeriodIndex = 0;
+                                          while(salePeriod[salePeriodIndex] != ' '){
+                                            durationString += salePeriod[salePeriodIndex];
+                                            salePeriodIndex++;
+                                          }
+
+                                          durationInt = int.parse(durationString);
+
+
+                                          int yearDifference = int.parse(endYear) - int.parse(startYear);
+                                          int monthDifference = endMonthInt - startMonthInt;
+                                          int dayDifference = int.parse(endDay) - int.parse(startDay);
+
+
+                                          int durationBetweenDates = (yearDifference*365) + (monthDifference * 30) + (dayDifference);
+
+                                          print('duration between dates: $durationBetweenDates');
+
+                                          if(durationInt != durationBetweenDates){
+                                            setState(() {
+                                              message = "Sale period is not equal to period between dates";
+                                            });
+                                            datesAreValid = false;
+                                          }
+                                        }
+                                      }
+
+
+
+                                      // IF DATES ARE VALID THEN UPDATE DATABASE
+                                      if(datesAreValid){
+                                        int serviceIndex = 0;
+
+                                        if(selectedServices[0] == true){
+                                          while(serviceIndex < selectedServices.length - 1){
+
+                                            int newPromotionAmount = snapshot.data!['$currentShopIndex']['services']['$serviceIndex']['flash-promotions-amount'];
 
                                             await databaseService.addFlashPromotion(
                                                 selectedCategory,
                                                 currentShopIndex,
-                                                serviceIndex-1,
+                                                serviceIndex,
                                                 newPromotionAmount,
                                                 salePeriod,
                                                 '$discount',
@@ -475,11 +589,42 @@ class _AddPromotionState extends State<AddPromotion> {
                                                 startYear,
                                                 endYear
                                             );
+
+                                            serviceIndex++;
+                                          }
+                                        }
+                                        else{
+                                          serviceIndex = 1;
+                                          while(serviceIndex < selectedServices.length){
+
+                                            if(selectedServices[serviceIndex] == true){
+
+                                              int newPromotionAmount = snapshot.data!['$currentShopIndex']['services']['${serviceIndex-1}']['flash-promotions-amount'];
+
+                                              await databaseService.addFlashPromotion(
+                                                  selectedCategory,
+                                                  currentShopIndex,
+                                                  serviceIndex-1,
+                                                  newPromotionAmount,
+                                                  salePeriod,
+                                                  '$discount',
+                                                  selectedPromotionType,
+                                                  startDay,
+                                                  endDay,
+                                                  startMonth,
+                                                  endMonth,
+                                                  startYear,
+                                                  endYear
+                                              );
+                                            }
+
+                                            serviceIndex++;
                                           }
 
-                                          serviceIndex++;
+
                                         }
 
+                                        Navigator.pushNamed(context, '/active-promotions');
 
                                       }
 
@@ -535,7 +680,7 @@ class _AddPromotionState extends State<AddPromotion> {
 
                                     }
 
-                                    Navigator.pushNamed(context, '/active-promotions');
+
 
 
 
@@ -560,6 +705,24 @@ class _AddPromotionState extends State<AddPromotion> {
         ),
       ),
     );
+  }
+
+  Widget buildError(){
+
+    if(message == ""){
+      return Container();
+    }
+    else{
+
+      String errorMessage = message;
+      message = "";
+
+      return Text(errorMessage,style: const TextStyle(
+        color: Colors.red,
+        fontWeight: FontWeight.bold,
+      ),);
+    }
+
   }
 
 
@@ -588,7 +751,7 @@ class _AddPromotionState extends State<AddPromotion> {
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: Colors.deepPurple,
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: IconButton(
@@ -597,7 +760,7 @@ class _AddPromotionState extends State<AddPromotion> {
                         discount--;
                       });
                     },
-                    icon: Icon(Icons.remove),
+                    icon: Icon(Icons.remove,color: Colors.white,),
                   ),
                 ),
                 SizedBox(width: 10,),
@@ -607,7 +770,7 @@ class _AddPromotionState extends State<AddPromotion> {
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                    color: Colors.blue,
+                    color: Colors.deepPurple,
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: IconButton(
@@ -616,7 +779,7 @@ class _AddPromotionState extends State<AddPromotion> {
                         discount++;
                       });
                     },
-                    icon: Icon(Icons.add),
+                    icon: Icon(Icons.add,color: Colors.white,),
                   ),
                 ),
               ],

@@ -117,11 +117,11 @@ class _DeleteServiceState extends State<DeleteService> {
                               }
                               else if (snapshot.hasData) {
                                 return Container(
-                                  width: 200,
+                                  width: 300,
                                   height: 50,
                                   decoration: BoxDecoration(
-                                    color: Colors.blue,
-                                    borderRadius: BorderRadius.circular(20),
+                                    color: Colors.deepPurple,
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: TextButton(
                                     onPressed: () async {

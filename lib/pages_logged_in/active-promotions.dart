@@ -693,7 +693,7 @@ class _ActivePromotionsState extends State<ActivePromotions> {
 
 
   Widget buildListTile(int index){
-    if(selectedType == "Flash Promotions"){
+    if(selectedType == "Flash Promotions" && activeIndexes[index]){
       return ListTile(
         leading: Container(
           width: 220,

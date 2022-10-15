@@ -345,6 +345,7 @@ class _PosState extends State<Pos> {
                         ),
                       ),
 
+                      /*
                       Positioned(
                         top: 32,
                         left: 102,
@@ -441,6 +442,7 @@ class _PosState extends State<Pos> {
                           ),
                         ),
                       ),
+                      */
 
                       Positioned(
                         top: 80,
@@ -955,6 +957,7 @@ class _PosState extends State<Pos> {
                                       ),
                                     ),
                                     SizedBox(height: 10,),
+                                    /*
                                     Container(
                                       decoration: BoxDecoration(
                                         color: Colors.red,
@@ -972,6 +975,7 @@ class _PosState extends State<Pos> {
                                         ),),
                                       ),
                                     ),
+                                    */
                                   ],
                                 ),
                               ],
@@ -2039,7 +2043,7 @@ class _PosState extends State<Pos> {
           height: 150,
           child: Column(
             children: [
-              Text("Client Selected: ", style: TextStyle(
+              Text("Client Selected", style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),),
@@ -2050,7 +2054,7 @@ class _PosState extends State<Pos> {
                 width: 200,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.deepPurple,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: TextButton(

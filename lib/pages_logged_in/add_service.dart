@@ -27,6 +27,13 @@ class _addServiceState extends State<addService> {
   TextEditingController servicePriceController = TextEditingController();
   TextEditingController serviceMaxTimingAmountController = TextEditingController();
 
+  bool membersOnly = false;
+  bool requiresConfirmation = false;
+
+  bool both = true;
+  bool credit = false;
+  bool cash = false;
+
   String hours = '0h';
   String minutes = '0min';
 
@@ -41,6 +48,7 @@ class _addServiceState extends State<addService> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         automaticallyImplyLeading: true,
         title: Text("Service details"),
         centerTitle: true,
@@ -64,6 +72,8 @@ class _addServiceState extends State<addService> {
 
                 if(initialEdit){
                   staffSelected = [];
+                  staffSelected.add(false);
+
 
                   int staffIndex = 0;
                   while(staffIndex < snapshot.data['$currentShopIndex']['staff-members-amount']){
@@ -81,14 +91,14 @@ class _addServiceState extends State<addService> {
                 return Center(
                   child: Container(
                     width: 1000,
-                    height: 1100,
+                    height: 1500,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(height: 50,),
                         Container(
                           width: 500,
-                          height: 900,
+                          height: 1100,
                           child: Card(
                             elevation: 2.0,
                             child: Column(
@@ -97,6 +107,45 @@ class _addServiceState extends State<addService> {
                                   margin: EdgeInsets.all(10),
                                   child: Column(
                                     children: [
+                                      SizedBox(height: 20,),
+                                      Container(
+                                        alignment: Alignment.center,
+                                        child: ListTile(
+                                          leading: Switch(
+                                            activeColor: Colors.deepPurple,
+                                            value: membersOnly,
+                                            onChanged: (bool value) {
+                                              setState(() {
+                                                membersOnly = !membersOnly;
+                                              });
+                                            },
+
+                                          ),
+                                          title: Text('Members Only', style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),),
+                                        ),
+                                      ),
+
+                                      Container(
+                                        alignment: Alignment.center,
+                                        child: ListTile(
+                                          leading: Switch(
+                                            activeColor: Colors.deepPurple,
+                                            value: requiresConfirmation,
+                                            onChanged: (bool value) {
+                                              setState(() {
+                                                requiresConfirmation = !requiresConfirmation;
+                                              });
+                                            },
+
+                                          ),
+                                          title: Text('Requires Confirmation', style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),),
+                                        ),
+                                      ),
+                                      SizedBox(height: 20,),
                                       TextField(
                                         controller: serviceTitleController,
                                         decoration: const InputDecoration(
@@ -278,6 +327,7 @@ class _addServiceState extends State<addService> {
 
                                 Text('Staff Members to perform this service', style: TextStyle(
                                   fontSize: 18,
+                                  fontWeight: FontWeight.bold,
                                 ),),
 
                                 SizedBox(height: 20,),
@@ -290,57 +340,141 @@ class _addServiceState extends State<addService> {
 
                                         if(index != 0){
                                           return ListTile(
-                                            leading: VerticalDivider(color: Colors.blue,),
+                                            leading: Switch(
+                                              activeColor: Colors.deepPurple,
+                                              value: staffSelected[index],
+                                              onChanged: (bool value) {
+                                                setState(() {
+
+                                                  staffSelected[index] = !staffSelected[index];
+
+
+                                                  /*
+                                                      bool falseFound = false;
+                                                  int idx = 1;
+                                                  while(idx < staffSelected.length){
+                                                    if(staffSelected[idx] == false){
+                                                      falseFound = true;
+                                                      break;
+                                                    }
+                                                    idx++;
+                                                  }
+
+                                                  if(falseFound){
+                                                    staffSelected[0] = false;
+                                                  }
+                                                  else{
+                                                    staffSelected[0] = true;
+                                                  }
+
+                                                  */
+
+                                                });
+                                              },
+                                            ),
                                             title: Text(snapshot.data['$currentShopIndex']['staff-members']['$index']['member-name']),
                                             subtitle: Text(snapshot.data['$currentShopIndex']['staff-members']['$index']['member-role']),
-                                            trailing: Container(
-                                              width: 110,
-                                              height: 50,
-                                              child: Row(
-                                                children: [
-                                                  Container(
-                                                    width: 50,
-                                                    height: 50,
-                                                    decoration: BoxDecoration(
-                                                      color: staffSelected[index]?Colors.green:Colors.grey,
-                                                      borderRadius: BorderRadius.circular(30),
-                                                    ),
-                                                    child: TextButton(
-                                                      onPressed: (){
-                                                        setState(() {
-                                                          staffSelected[index] = true;
-                                                        });
-                                                      },
-                                                      child: Icon(Icons.check,color: Colors.white,),
-                                                    ),
-                                                  ),
-                                                  SizedBox(width: 10,),
-                                                  Container(
-                                                    width: 50,
-                                                    height: 50,
-                                                    decoration: BoxDecoration(
-                                                      color: !staffSelected[index]?Colors.red:Colors.grey,
-                                                      borderRadius: BorderRadius.circular(30),
-                                                    ),
-                                                    child: TextButton(
-                                                      onPressed: (){
-                                                        setState(() {
-                                                          staffSelected[index] = false;
-                                                        });
-                                                      },
-                                                      child: Icon(Icons.close,color: Colors.white,),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
                                           );
                                         }
                                         else{
-                                          return Container();
+                                          return ListTile(
+                                            leading: Switch(
+                                              activeColor: Colors.deepPurple,
+                                              value: staffSelected[index],
+                                              onChanged: (bool value) {
+                                                setState(() {
+
+                                                  if(staffSelected[index] == false){
+                                                    int idx = 0;
+                                                    while(idx < staffSelected.length){
+
+                                                      staffSelected[idx] = true;
+
+                                                      idx++;
+                                                    }
+                                                  }
+                                                  else{
+                                                    int idx = 0;
+                                                    while(idx < staffSelected.length){
+
+                                                      staffSelected[idx] = false;
+
+                                                      idx++;
+                                                    }
+                                                  }
+                                                });
+                                              },
+                                            ),
+                                            title: Text("All"),
+                                          );
                                         }
                                       }),
                                 ),
+
+                                Text("Accepted Payment Methods", style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),),
+
+                                SizedBox(height: 10,),
+
+
+                                Center(
+                                  child: ListTile(
+                                    leading: Switch(
+                                      activeColor: Colors.deepPurple,
+                                      onChanged: (bool value) {
+                                        setState(() {
+                                          both = !both;
+
+                                          credit = false;
+                                          cash = false;
+
+                                        });
+                                      },
+                                      value: both,
+
+                                    ),
+                                    title: Text("Credit Card and Cash"),
+                                  ),
+                                ),
+
+                                SizedBox(height: 5,),
+
+                                ListTile(
+                                  leading: Switch(
+                                    activeColor: Colors.deepPurple,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        credit = !credit;
+                                        both = false;
+                                      });
+                                    },
+                                    value: credit,
+
+                                  ),
+                                  title: Text("Credit Card Only"),
+                                ),
+
+                                SizedBox(height: 5,),
+
+
+                                ListTile(
+                                  leading: Switch(
+                                    activeColor: Colors.deepPurple,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        cash = !cash;
+                                        both = false;
+                                      });
+                                    },
+                                    value: cash,
+
+                                  ),
+                                  title: Text("Cash Only"),
+                                ),
+
+
 
                               ],
                             ),
@@ -349,16 +483,12 @@ class _addServiceState extends State<addService> {
 
                         SizedBox(height: 20,),
 
-
-
-
-                        SizedBox(height: 40,),
                         Container(
-                          width: 200,
+                          width: 300,
                           height: 50,
                           decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.deepPurple,
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           child: TextButton(
                             onPressed: () async {
@@ -375,9 +505,14 @@ class _addServiceState extends State<addService> {
                                 servicePriceController.text,
                                 minuteGap,
                                 numberOfBookings,
+                                requiresConfirmation,
+                                membersOnly,
+                                both,
+                                credit,
+                                cash
                               );
 
-                              int staffIndex = 0;
+                              int staffIndex = 1;
                               int serviceIndex = 0;
                               while(staffIndex < snapshot.data['$currentShopIndex']['staff-members-amount']){
 

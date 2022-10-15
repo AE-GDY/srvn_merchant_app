@@ -1189,6 +1189,11 @@ class DatabaseService{
       String servicePrice,
       int minuteGap,
       int maxBookings,
+      bool requiresConfirmation,
+      bool membersOnly,
+      bool both,
+      bool credit,
+      bool cash,
       ) async {
     return await shops.doc(category).set({
       '$currentShopIdx' : {
@@ -1201,6 +1206,8 @@ class DatabaseService{
             'service-linked': maxBookings > 1?true:false,
             'minute-gap':minuteGap,
             'max-amount-per-timing': maxBookings,
+            'requires-confirmation': requiresConfirmation,
+            'members-only': membersOnly,
 
             'flash-promotions-amount': 0,
             'last-minute-promotions-amount': 0,
@@ -1209,6 +1216,10 @@ class DatabaseService{
             'flash-promotions': {},
             'last-minute-promotions': {},
             'happy-hour-promotions': {},
+
+            'both': both,
+            'credit': credit,
+            'cash': cash,
 
 
           },
