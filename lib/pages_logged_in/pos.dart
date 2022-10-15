@@ -1731,7 +1731,21 @@ class _PosState extends State<Pos> {
       );
     }
     else if(selectedInPos == "Gift Cards"){
-      return Container();
+      return Positioned(
+        left: 380,
+        top: 200,
+        child: Container(
+          child: Column(
+            children: [
+              Text('Coming Soon!', style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 30,
+              ),),
+
+            ],
+          ),
+        ),
+      );
     }
     else if(selectedInPos == "Packages"){
       return Positioned(

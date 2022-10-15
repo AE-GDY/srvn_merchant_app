@@ -407,6 +407,8 @@ class _AddPromotionState extends State<AddPromotion> {
                     child: buildError(),
                   ),
 
+                  SizedBox(height:10),
+
                   FutureBuilder(
                       future: categoryData(),
                       builder: (BuildContext context, AsyncSnapshot<Map<String, dynamic>?> snapshot) {
@@ -449,7 +451,7 @@ class _AddPromotionState extends State<AddPromotion> {
 
                                       int endMonthInt = 0;
                                       while(endMonthInt < months.length){
-                                        if(startMonth == months[endMonthInt]){
+                                        if(endMonth == months[endMonthInt]){
                                           endMonthInt++;
                                           break;
                                         }
@@ -550,8 +552,11 @@ class _AddPromotionState extends State<AddPromotion> {
                                           int dayDifference = int.parse(endDay) - int.parse(startDay);
 
 
+
                                           int durationBetweenDates = (yearDifference*365) + (monthDifference * 30) + (dayDifference);
 
+                                          print('year difference: $yearDifference');
+                                          print('month difference: $monthDifference');
                                           print('duration between dates: $durationBetweenDates');
 
                                           if(durationInt != durationBetweenDates){

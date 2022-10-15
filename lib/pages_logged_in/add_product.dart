@@ -30,6 +30,7 @@ class _AddProductState extends State<AddProduct> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Add Product"),
+        backgroundColor: Colors.deepPurple,
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -68,28 +69,19 @@ class _AddProductState extends State<AddProduct> {
                               ),
                             ),
                             SizedBox(height: 30,),
+                            Text("Stock",style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold
+                            ),),
                             Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                SizedBox(width: 170,),
-                                Column(
-                                  children: [
-                                    Text("Stock",style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold
-                                    ),),
-                                    SizedBox(height: 10,),
-                                    Text("$productStock",style: TextStyle(
-                                      fontSize: 18
-                                    ),),
-                                  ],
-                                ),
-                                SizedBox(width: 20,),
                                 Container(
-                                  width: 100,
-                                  height: 40,
+                                  width: 50,
+                                  height: 50,
                                   decoration: BoxDecoration(
                                     color: Colors.green,
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(30),
                                   ),
                                   child: TextButton(
                                     onPressed: (){
@@ -97,7 +89,30 @@ class _AddProductState extends State<AddProduct> {
                                         productStock++;
                                       });
                                     },
-                                    child: Text("Add", style: TextStyle(
+                                    child: Text("-", style: TextStyle(
+                                      color: Colors.white,
+                                    ),),
+                                  ),
+                                ),
+                                SizedBox(width: 20,),
+                                Text("$productStock",style: TextStyle(
+                                    fontSize: 18
+                                ),),
+                                SizedBox(width: 20,),
+                                Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: Colors.green,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  child: TextButton(
+                                    onPressed: (){
+                                      setState(() {
+                                        productStock++;
+                                      });
+                                    },
+                                    child: Text("+", style: TextStyle(
                                       color: Colors.white,
                                     ),),
                                   ),
@@ -109,10 +124,10 @@ class _AddProductState extends State<AddProduct> {
                             SizedBox(height: 80,),
 
                             Container(
-                              width: 150,
+                              width: 300,
                               height: 50,
                               decoration: BoxDecoration(
-                                color: Colors.blue,
+                                color: Colors.deepPurple,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: TextButton(

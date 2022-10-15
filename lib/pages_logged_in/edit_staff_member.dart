@@ -20,6 +20,8 @@ class _EditStaffMemberState extends State<EditStaffMember> {
     doc(selectedCategory).get()).data();
   }
 
+
+  bool initialEdit = true;
   String selectedService = "";
   String tabSelected = "User Info";
   List<String> tabs = ['User Info', 'Services','Working Hours'];
@@ -34,6 +36,10 @@ class _EditStaffMemberState extends State<EditStaffMember> {
   String dayToChange = 'Sunday';
 
   DatabaseService databaseService = DatabaseService();
+
+
+  List<String> services = [];
+  List<bool> servicesSelected = [];
 
 
   bool displayError = false;
@@ -72,7 +78,7 @@ class _EditStaffMemberState extends State<EditStaffMember> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Service',style: TextStyle(
+        title: Text('Edit Staff Member',style: TextStyle(
             color: Colors.black
         ),),
         backgroundColor: Colors.transparent,
@@ -99,7 +105,7 @@ class _EditStaffMemberState extends State<EditStaffMember> {
         physics: ScrollPhysics(),
         child: Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height + 500,
           child: Column(
             children: [
 
@@ -139,6 +145,7 @@ class _EditStaffMemberState extends State<EditStaffMember> {
           child: Card(
             elevation: 1.0,
             child: Column(
+             // crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(height: 20,),
                 buildTabs(snapshot),
@@ -177,11 +184,11 @@ class _EditStaffMemberState extends State<EditStaffMember> {
                       }
                       else if(snapshot.hasData){
                         return Container(
-                          width: 200,
+                          width: 300,
                           height: 50,
                           decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.deepPurple,
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           child: TextButton(
                             onPressed: () async{
@@ -229,10 +236,6 @@ class _EditStaffMemberState extends State<EditStaffMember> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 20,),
-                Text("Edit User Services", style: TextStyle(
-                  fontSize: 20,
-                ),),
-                SizedBox(height: 20,),
                 buildTabs(snapshot),
                 SizedBox(height: 0,),
                 Container(
@@ -264,18 +267,42 @@ class _EditStaffMemberState extends State<EditStaffMember> {
                         return const Text("There is an error");
                       }
                       else if(snapshot.hasData){
+
+
+                        if(initialEdit){
+                          int serviceIndex = 0;
+                          while(serviceIndex < snapshot.data['$currentShopIndex']['services-amount']){
+                            services.add(snapshot.data['$currentShopIndex']['services']['$serviceIndex']['service-name']);
+                            servicesSelected.add(false);
+                            serviceIndex++;
+                          }
+
+                          initialEdit = false;
+                        }
+
+
                         return Container(
                           width: 300,
-                          height: 100,
+                          height: 200,
                           child: ListView.builder(
-                              itemCount: snapshot.data['$currentShopIndex']['staff-members']['$selectedStaffIdx']['member-services-amount'],
+                              itemCount: snapshot.data['$currentShopIndex']['services-amount'],
                               itemBuilder: (context,index){
                                 return Container(
                                   width: 300,
                                   child: ListTile(
-                                    leading: VerticalDivider(color: Colors.blue,),
-                                    title: Text(snapshot.data['$currentShopIndex']['staff-members']['$selectedStaffIdx']['member-services']['$index']),
-                                    trailing: IconButton(
+                                    leading: Switch(
+                                      activeColor: Colors.deepPurple,
+                                      value: servicesSelected[index],
+                                      onChanged: (bool value) {
+                                        setState(() {
+                                          servicesSelected[index] = !servicesSelected[index];
+                                        });
+                                      },
+
+                                    ),
+                                    title: Text(snapshot.data['$currentShopIndex']['services']['$index']['service-name']),
+                                    /*
+                                    IconButton(
                                       onPressed: () async {
                                         // REMOVES SELECTED SERVICE FROM LIST OF SERVICES FOR SELECTED STAFF MEMBER
 
@@ -339,6 +366,7 @@ class _EditStaffMemberState extends State<EditStaffMember> {
                                       },
                                       icon: Icon(Icons.highlight_remove, color: Colors.red,),
                                     ),
+                                    */
                                   ),
                                 );
                               }),
@@ -350,98 +378,59 @@ class _EditStaffMemberState extends State<EditStaffMember> {
 
                 ),
 
-                SizedBox(height: 70,),
-
-                FutureBuilder(
-                  future: categoryData(),
-                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    if(snapshot.connectionState == ConnectionState.done){
-                      if(snapshot.hasError){
-                        return const Text("There is an error");
-                      }
-                      else if(snapshot.hasData){
-
-                        List<String> shopServices = [];
-                        shopServices.add("");
-
-                        int serviceIdx = 0;
-
-                        while(serviceIdx < snapshot.data['$currentShopIndex']['services-amount']){
-                          bool serviceFound = findService(snapshot.data['$currentShopIndex']['services']['$serviceIdx']['service-name'], snapshot, selectedStaffIdx);
-                          if(!serviceFound){
-                            shopServices.add(snapshot.data['$currentShopIndex']['services']['$serviceIdx']['service-name']);
-                          }
-                          serviceIdx++;
-                        }
-
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(width: 20,),
-                            Text("Service", style: TextStyle(
-                              fontSize: 20,
-                            ),),
-                            SizedBox(width: 30,),
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black, width: 1.0),
-                              ),
-                              width: 150,
-                              child: DropdownButton<String>(
-                                value: selectedService,
-                                icon: const Icon(Icons.arrow_downward),
-                                elevation: 16,
-                                //style: const TextStyle(color: Colors.deepPurple),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    selectedService = newValue!;
-                                  });
-                                },
-                                items: shopServices.map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ],
-                        );
-
-                      }
-                    }
-                    return const Text("Please wait");
-                  },
-
-                ),
-
-                SizedBox(height: 10,),
+                SizedBox(height: 50,),
 
                 Center(
                   child: Container(
-                    width: 200,
+                    width: 300,
                     height: 50,
                     decoration: BoxDecoration(
-                      color: Colors.green,
+                      color: Colors.deepPurple,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: TextButton(
-                      onPressed: () async{
+                      onPressed: () async {
 
-                        if(selectedService != ""){
-                          // ADD SELECTED SERVICE TO LIST OF SERVICES IN DATABASE
-                          await databaseService.editStaffMemberServiceInfo(
+                        int serviceIndex = 0;
+                        int databaseIndex = 0;
+                        while(serviceIndex < servicesSelected.length){
+
+                          if(servicesSelected[serviceIndex]){
+                            await databaseService.editStaffMemberServiceInfo(
                               selectedCategory,
                               currentShopIndex,
                               selectedStaffIdx,
-                              selectedService,
-                              snapshot.data['$currentShopIndex']['staff-members']['$selectedStaffIdx']['member-services-amount']
-                          );
+                              services[serviceIndex],
+                              databaseIndex,
+                            );
+                            databaseIndex++;
+                          }
 
-                          selectedService = "";
+                          serviceIndex++;
                         }
+
+                        while(databaseIndex < snapshot.data['$currentShopIndex']['staff-members']['$selectedStaffIdx']['member-services-amount']){
+                          await databaseService.removeStaffMemberService(
+                            selectedCategory,
+                            currentShopIndex,
+                            selectedStaffIdx,
+                            serviceIndex,
+                          );
+                          serviceIndex++;
+                        }
+
+                        await databaseService.updateStaffMemberServiceAmount(
+                            selectedCategory,
+                            currentShopIndex,
+                            selectedStaffIdx,
+                            databaseIndex
+                        );
+
+                        Navigator.pushNamed(context, '/staff-members-page');
+
+
                       },
-                      child: Text("Add Service", style: TextStyle(
+                      child: Text("Save Changes", style: TextStyle(
                         color: Colors.white,
                       ),),
                     ),
@@ -477,75 +466,48 @@ class _EditStaffMemberState extends State<EditStaffMember> {
             child: Column(
               children: [
                 SizedBox(height: 20,),
-                Text("Edit Staff Member", style: TextStyle(
-                  fontSize: 20,
-                ),),
-                SizedBox(height: 20,),
                 buildTabs(snapshot),
                 SizedBox(height: 20,),
-                Align(
-                  alignment: Alignment.center,
-                  child: Text("Business Hours", style: TextStyle(
-                    fontSize: 20,
-                  ),),
+                Text("Day", style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),),
+                SizedBox(height: 10,),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black, width: 1.0),
+                  ),
+                  width: 150,
+                  child: DropdownButton<String>(
+                    value: dayToChange,
+                    icon: const Icon(Icons.arrow_downward),
+                    elevation: 16,
+                    //style: const TextStyle(color: Colors.deepPurple),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        dayToChange = newValue!;
+                        displayError = false;
+                        dayOff = false;
+                      });
+                    },
+                    items: weekDays
+                        .map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
                 ),
                 SizedBox(height: 30,),
-                FutureBuilder(
-                  future: categoryData(),
-                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    if(snapshot.connectionState == ConnectionState.done){
-                      if(snapshot.hasError){
-                        return const Text("There is an error");
-                      }
-                      else if(snapshot.hasData){
-                        return Row(
-                          children: [
-                            Text("Day", style: TextStyle(
-                              fontSize: 20,
-                            ),),
-                            SizedBox(width: 30,),
-                            Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black, width: 1.0),
-                              ),
-                              width: 150,
-                              child: DropdownButton<String>(
-                                value: dayToChange,
-                                icon: const Icon(Icons.arrow_downward),
-                                elevation: 16,
-                                //style: const TextStyle(color: Colors.deepPurple),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    dayToChange = newValue!;
-                                    displayError = false;
-                                    dayOff = false;
-                                  });
-                                },
-                                items: weekDays
-                                    .map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-                    }
-                    return const Text("Please wait");
-                  },
-
-                ),
-
-                SizedBox(height: 30,),
+                Text("Working hours ", style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),),
+                SizedBox(height: 10,),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Working hours ", style: TextStyle(
-                      fontSize: 20,
-                    ),),
-                    SizedBox(width: 30,),
                     Container(
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.black, width: 1.0),
@@ -629,6 +591,8 @@ class _EditStaffMemberState extends State<EditStaffMember> {
                     ),
                   ],
                 ),
+
+
                 SizedBox(height: 40,),
                 buildErrorMessage(),
                 SizedBox(height: 85,),
@@ -644,11 +608,11 @@ class _EditStaffMemberState extends State<EditStaffMember> {
                         //businessHours[currentDayWorkingHoursToChange]!['end'] = endingHour;
 
                         return Container(
-                          width: 200,
+                          width: 300,
                           height: 50,
                           decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.deepPurple,
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           child: TextButton(
                             onPressed: () async{
@@ -737,7 +701,10 @@ class _EditStaffMemberState extends State<EditStaffMember> {
 
   Widget buildTabs(AsyncSnapshot<dynamic> snapshot){
     return Container(
-      width: 400,
+      decoration: BoxDecoration(
+          //color: Colors.green,
+      ),
+      width: 600,
       height: 60,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -745,7 +712,9 @@ class _EditStaffMemberState extends State<EditStaffMember> {
           itemCount: tabs.length,
           itemBuilder: (context,index){
             return Container(
+              alignment: Alignment.center,
               margin: EdgeInsets.all(10),
+              width: (600 / 3.5),
               height: 60,
               child: TextButton(
                 onPressed: (){

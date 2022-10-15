@@ -1312,7 +1312,7 @@ class DatabaseService{
       '$currentShopIdx' : {
         'staff-members': {
           '$staffIndex': {
-            'member-services-amount': serviceIndex+1,
+            //'member-services-amount': serviceIndex+1,
             'member-services':{
               '$serviceIndex': service,
               },
@@ -1414,10 +1414,28 @@ class DatabaseService{
       '$currentShopIdx' : {
         'staff-members': {
           '$staffIndex': {
-            'member-services-amount': serviceIndex+1,
+            //   'member-services-amount': newAmount,
             'member-services':{
               '$serviceIndex': FieldValue.delete(),
             },
+          },
+        },
+      },
+    }, SetOptions(merge: true),
+    );
+  }
+
+  Future updateStaffMemberServiceAmount(
+      String category,
+      int currentShopIdx,
+      int staffIndex,
+      int newAmount,
+      ) async {
+    return await shops.doc(category).set({
+      '$currentShopIdx' : {
+        'staff-members': {
+          '$staffIndex': {
+            'member-services-amount': newAmount,
           },
         },
       },
