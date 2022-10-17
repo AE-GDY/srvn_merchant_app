@@ -161,6 +161,7 @@ class DatabaseService{
           'complete': 0,
           'no-shows': 0,
           'cancelled': 0,
+          'declined': 0,
         },
       },
       'total-shop-amount' : currentShopIdx,
@@ -288,6 +289,28 @@ class DatabaseService{
     );
   }
 
+
+  Future declineAppointment(
+      String category,
+      int currentShopIdx,
+      int appointmentIndex,
+      int declinedAmount,
+
+      ) async {
+    return await shops.doc(category).set({
+      '$currentShopIdx' : {
+        'appointments':{
+          '$appointmentIndex':{
+            'appointment-status': 'declined',
+          },
+          'declined': declinedAmount,
+        },
+      },
+    },SetOptions(merge: true),
+    );
+  }
+
+
   Future confirmAppointmentForUser(
       int userIndex,
       int appointmentIndex,
@@ -298,6 +321,24 @@ class DatabaseService{
         'appointments':{
           '$appointmentIndex':{
             'pending-confirmation': false,
+          },
+        },
+      },
+    },SetOptions(merge: true),
+    );
+  }
+
+  Future declineAppointmentForUser(
+      int userIndex,
+      int appointmentIndex,
+
+      ) async {
+    return await users.doc("signed-up").set({
+      '$userIndex' : {
+        'appointments':{
+          '$appointmentIndex':{
+            'pending-confirmation': false,
+            'declined': true,
           },
         },
       },

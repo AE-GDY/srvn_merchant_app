@@ -162,7 +162,7 @@ class _AddStaffMemberState extends State<AddStaffMember> {
           child: Container(
             margin: EdgeInsets.all(20),
             width: MediaQuery.of(context).size.width - 400,
-            height: MediaQuery.of(context).size.height + 1000,
+            height: MediaQuery.of(context).size.height + 200,
             child: Card(
               elevation: 5.0,
               child: Column(
@@ -182,6 +182,7 @@ class _AddStaffMemberState extends State<AddStaffMember> {
                         TextField(
                           controller: nameController,
                           decoration: InputDecoration(
+                            focusColor: Colors.deepPurple,
                             labelText: "Staff Member Name",
                           ),
                         ),
@@ -203,7 +204,7 @@ class _AddStaffMemberState extends State<AddStaffMember> {
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                color: isDefault?Colors.green:Colors.grey,
+                                color: isDefault?Colors.deepPurple:Colors.grey,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               width: 200,
@@ -222,7 +223,7 @@ class _AddStaffMemberState extends State<AddStaffMember> {
                             SizedBox(width: 10,),
                             Container(
                               decoration: BoxDecoration(
-                                color: isDefault?Colors.grey:Colors.green,
+                                color: isDefault?Colors.grey:Colors.deepPurple,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               width: 200,
@@ -281,65 +282,28 @@ class _AddStaffMemberState extends State<AddStaffMember> {
 
                           return Container(
                             width: 400,
-                            height: 520,
+                            height: 300,
                             child: ListView.builder(
                                 scrollDirection: Axis.vertical,
                                 physics: ScrollPhysics(),
                                 itemCount: snapshot.data['$currentShopIndex']['services-amount'],
                                 itemBuilder: (context,index){
 
-                                  return Container(
-                                    height: 150,
-                                    width: 350,
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          child: ListTile(
-                                            leading: VerticalDivider(color: Colors.blue,),
-                                            title: Column(
-                                              children: [
-                                                Text(snapshot.data['$currentShopIndex']['services']['$index']['service-name'], style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                ),),
-                                                Text("${snapshot.data['$currentShopIndex']['services']['$index']['service-hours']} ${snapshot.data['$currentShopIndex']['services']['$index']['service-minutes']}"),
-                                              ],
-                                            ),
-                                            trailing: Text("${snapshot.data['$currentShopIndex']['services']['$index']['service-price']} EGP"),
-                                          ),
-                                          width: 300,
-                                          height: 100,
-                                        ),
+                                  return ListTile(
+                                    leading: Switch(
+                                      value:  isChecked[index],
+                                      onChanged: (bool value) {
+                                        setState(() {
+                                          isChecked[index] = !isChecked[index];
+                                        });
+                                      },
 
-                                        Container(
-                                          child: IconButton(
-                                              onPressed: (){
-                                                setState(() {
-                                                  isChecked[index] = true;
-                                                  //staffServices['${staffServices.length}'] = snapshot.data['$currentShopIndex']['services']['$index']['service-name'];
-                                                });
-                                              },
-                                              icon: Icon(Icons.check_circle_outline, color: isChecked[index]?Colors.green:Colors.grey,),
-                                          ),
-                                          width: 50,
-                                          height: 50,
-                                        ),
-                                        SizedBox(width: 5,),
-                                        Container(
-                                          child: IconButton(
-                                              onPressed: (){
-                                                setState(() {
-                                                  isChecked[index] = false;
-                                                  //staffServices.remove(snapshot.data['$currentShopIndex']['services']['$index']['service-name']);
-                                                });
-                                              },
-                                              icon: Icon(Icons.highlight_remove, color: isChecked[index]?Colors.grey:Colors.green,),
-                                          ),
-                                          width: 50,
-                                          height: 50,
-                                        ),
-
-                                      ],
                                     ),
+                                    title: Text(snapshot.data['$currentShopIndex']['services']['$index']['service-name'], style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),),
+                                    subtitle: Text("${snapshot.data['$currentShopIndex']['services']['$index']['service-hours']} ${snapshot.data['$currentShopIndex']['services']['$index']['service-minutes']}"),
+                                    trailing: Text("${snapshot.data['$currentShopIndex']['services']['$index']['service-price']} EGP"),
                                   );
                                 }
                                 ),
@@ -360,10 +324,10 @@ class _AddStaffMemberState extends State<AddStaffMember> {
                         else if(snapshot.hasData){
                           return Container(
                             decoration: BoxDecoration(
-                              color: Colors.green,
+                              color: Colors.deepPurple,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            width: 200,
+                            width: 300,
                             height: 50,
                             child: TextButton(
                               onPressed: () async {

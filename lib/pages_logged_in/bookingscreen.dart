@@ -1576,7 +1576,9 @@ class _BookingScreenState extends State<BookingScreen> {
     // AND THE DAY, MONTH, AND YEAR IN THE CURRENT APPOINTMENT ARE EQUAL TO WHAT IS SELECTED IN THE CALENDAR
     // THEN WE CAN BEGIN TO CHECK IF THE TIME SELECTED IS OCCUPIED OR NOT
 
-    if(snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['appointment-status'] == 'incomplete'){
+    if(snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['appointment-status'] == 'incomplete'
+    || snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['appointment-status'] ==
+            'pending-confirmation'){
       //print('X');
       if(snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['member-name'] == staffName){
         //print('B');

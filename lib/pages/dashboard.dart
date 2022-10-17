@@ -431,7 +431,7 @@ class _DashBoardState extends State<DashBoard> {
                                       ),
                                     ),
                                     trailing: Container(
-                                      width: 360,
+                                      width: 380,
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
@@ -460,36 +460,73 @@ class _DashBoardState extends State<DashBoard> {
                                             ),
                                           ),
 
-                                          appointmentData[index].requiresConfirmation == 'pending-confirmation'?Container(
-                                            width: 150,
-                                            height: 40,
-                                            decoration: BoxDecoration(
-                                              color: Colors.deepOrange,
-                                              borderRadius: BorderRadius.circular(10),
-                                            ),
-                                            child: TextButton(
-                                              onPressed: () async {
+                                          appointmentData[index].requiresConfirmation == 'pending-confirmation'?Row(
+                                            children: [
+                                              Container(
+                                                width: 80,
+                                                height: 40,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.green,
+                                                  borderRadius: BorderRadius.circular(10),
+                                                ),
+                                                child: TextButton(
+                                                  onPressed: () async {
 
-                                                setState(() async {
-                                                  await databaseService.confirmAppointment(
-                                                    selectedCategory,
-                                                    currentShopIndex,
-                                                    appointmentData[index].appointmentIndex,
-                                                  );
+                                                    setState(() async {
+                                                      await databaseService.confirmAppointment(
+                                                        selectedCategory,
+                                                        currentShopIndex,
+                                                        appointmentData[index].appointmentIndex,
+                                                      );
 
-                                                  await databaseService.confirmAppointmentForUser(
-                                                      appointmentData[index].userIndex,
-                                                      appointmentData[index].userAppointmentIndex
-                                                  );
+                                                      await databaseService.confirmAppointmentForUser(
+                                                          appointmentData[index].userIndex,
+                                                          appointmentData[index].userAppointmentIndex
+                                                      );
 
-                                                });
+                                                    });
 
 
-                                              },
-                                              child: Text('Confirm Booking', style: TextStyle(
-                                                color: Colors.white,
-                                              ),),
-                                            ),
+                                                  },
+                                                  child: Text('Confirm', style: TextStyle(
+                                                    color: Colors.white,
+                                                  ),),
+                                                ),
+                                              ),
+                                              SizedBox(width: 5,),
+                                              Container(
+                                                width: 80,
+                                                height: 40,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.red,
+                                                  borderRadius: BorderRadius.circular(10),
+                                                ),
+                                                child: TextButton(
+                                                  onPressed: () async {
+
+                                                    setState(() async {
+                                                      await databaseService.declineAppointment(
+                                                        selectedCategory,
+                                                        currentShopIndex,
+                                                        appointmentData[index].appointmentIndex,
+                                                        appointmentData[index].declinedAmount + 1,
+                                                      );
+
+                                                      await databaseService.declineAppointmentForUser(
+                                                          appointmentData[index].userIndex,
+                                                          appointmentData[index].userAppointmentIndex
+                                                      );
+
+                                                    });
+
+
+                                                  },
+                                                  child: Text('Decline', style: TextStyle(
+                                                    color: Colors.white,
+                                                  ),),
+                                                ),
+                                              ),
+                                            ],
                                           ):Container(
                                             width: 150,
                                             height: 40,
@@ -604,7 +641,7 @@ class MeetingDataSource extends CalendarDataSource {
 List<Meeting> appointmentData = [];
 
 class Meeting {
-  Meeting(this.userAppointmentIndex,this.userIndex,this.appointmentIndex,this.phoneNumber,this.requiresConfirmation,this.eventName,this.clientName, this.startTime, this.endTime,this.from, this.to, this.background, this.isAllDay);
+  Meeting(this.declinedAmount,this.userAppointmentIndex,this.userIndex,this.appointmentIndex,this.phoneNumber,this.requiresConfirmation,this.eventName,this.clientName, this.startTime, this.endTime,this.from, this.to, this.background, this.isAllDay);
 
   int userIndex;
   int userAppointmentIndex;
@@ -619,6 +656,7 @@ class Meeting {
   DateTime to;
   Color background;
   bool isAllDay;
+  int declinedAmount;
 }
 List<Meeting> _getDataSource(AsyncSnapshot<dynamic> snapshot) {
   final List<Meeting> meetings = <Meeting>[];
@@ -648,6 +686,7 @@ List<Meeting> _getDataSource(AsyncSnapshot<dynamic> snapshot) {
       );
 
       meetings.add(Meeting(
+          snapshot.data['$currentShopIndex']['appointments']['declined'],
           snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['user-appointment-index'],
           snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['user-index'],
           appointmentIndex,
@@ -663,6 +702,7 @@ List<Meeting> _getDataSource(AsyncSnapshot<dynamic> snapshot) {
 
 
       appointmentData.add(Meeting(
+          snapshot.data['$currentShopIndex']['appointments']['declined'],
           snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['user-appointment-index'],
           snapshot.data['$currentShopIndex']['appointments']['$appointmentIndex']['user-index'],
           appointmentIndex,
