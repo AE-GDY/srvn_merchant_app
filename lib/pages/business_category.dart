@@ -10,7 +10,7 @@ class BusinessCategory extends StatefulWidget {
 }
 
 class _BusinessCategoryState extends State<BusinessCategory> {
-  List<bool> isChecked = [false,false,false,false,false,false];
+  List<bool> isChecked = [false,false,false,false,false,false,false];
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +94,14 @@ class _BusinessCategoryState extends State<BusinessCategory> {
                         ),
                         child: TextButton(
                           onPressed: (){
-                            Navigator.pushNamed(context, '/adding-services');
+
+                            if(selectedCategory != 'Restaurants'){
+                              Navigator.pushNamed(context, '/adding-services');
+                            }
+                            else{
+                              Navigator.pushNamed(context, '/reservation_options');
+                            }
+
                           },
                           child: Center(
                             child: Text("Continue", style: TextStyle(

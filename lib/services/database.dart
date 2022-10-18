@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import '../constants.dart';
+import '../pages/adjust_reservation_options.dart';
 
 class DatabaseService{
 
@@ -282,6 +283,39 @@ class DatabaseService{
         'appointments':{
           '$appointmentIndex':{
             'appointment-status': 'incomplete',
+          },
+        },
+      },
+    },SetOptions(merge: true),
+    );
+  }
+
+
+  Future addTables(
+      String category,
+      int currentShopIdx,
+      bool requiresConfirmation,
+      bool downPayment,
+      int downPaymentAmount,
+      int tableIndex,
+      int maxAmount,
+      ) async {
+    return await shops.doc(category).set({
+      '$currentShopIdx' : {
+        'requires-confirmation': requiresConfirmation,
+        'restaurant-minute-gap': restaurantMinuteGap,
+        'credit': restaurantCredit,
+        'cash': restaurantCash,
+        'both': restaurantBoth,
+        'down-payment': downPayment,
+        'down-payment-amount': downPayment?downPaymentAmount:0,
+        'tables-amount': tables.length,
+        'max-customer-amount': maxAmount,
+        'tables':{
+          '$tableIndex':{
+            'table-name': tables[tableIndex],
+            'table-amount': tableAmount[tableIndex],
+            'amount-booked': 0,
           },
         },
       },

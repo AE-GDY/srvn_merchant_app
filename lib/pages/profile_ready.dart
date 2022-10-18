@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:servnn_client_side/pages/adjust_reservation_options.dart';
 import 'package:servnn_client_side/services/database.dart';
 
 import '../constants.dart';
@@ -255,31 +256,69 @@ class _ProfileReadyState extends State<ProfileReady> {
                                           timePicked.day
                                       );
 
-                                      // Adds Staff Members
-                                      int staffIdx = 0;
-                                      while(staffIdx < staffMembers.length){
-                                        await databaseService.addStaffMembers(
-                                          selectedCategory,
-                                          staffIdx!= 0?serviceStaffMembers[staffIdx-1]:{},
-                                          snapshot.data['total-shop-amount']+1,
-                                          staffIdx,
-                                        );
-                                        staffIdx++;
+
+                                      if(selectedCategory != 'Restaurants'){
+                                        // Adds Staff Members
+                                        int staffIdx = 0;
+                                        while(staffIdx < staffMembers.length){
+                                          await databaseService.addStaffMembers(
+                                            selectedCategory,
+                                            staffIdx!= 0?serviceStaffMembers[staffIdx-1]:{},
+                                            snapshot.data['total-shop-amount']+1,
+                                            staffIdx,
+                                          );
+                                          staffIdx++;
+                                        }
+
+                                        // Adds services
+                                        int serviceIdx = 0;
+                                        while(serviceIdx < services.length){
+                                          await databaseService.addServices(
+                                            selectedCategory,
+                                            snapshot.data['total-shop-amount']+1,
+                                            serviceIdx,
+                                            services[serviceIdx].gap,
+                                            services[serviceIdx].maxBookings,
+                                            services[serviceIdx].maxBookings == 1?false:true,
+                                          );
+                                          serviceIdx++;
+                                        }
+                                      }
+                                      else{
+
+                                        int maxAmount = 0;
+
+                                        int tableIndex = 0;
+                                        while(tableIndex < tables.length){
+
+                                          if(tableAmount[tableIndex] > maxAmount){
+                                            maxAmount = tableAmount[tableIndex];
+                                          }
+
+                                          tableIndex++;
+                                        }
+
+
+                                        tableIndex = 0;
+                                        while(tableIndex < tables.length){
+                                          
+                                          await databaseService.addTables(
+                                              selectedCategory,
+                                              snapshot.data['total-shop-amount']+1,
+                                              tablesRequiresConfirmation,
+                                              downPayment,
+                                              downPayment?int.parse(downPaymentController.text):0,
+                                              tableIndex,
+                                              maxAmount,
+                                          );
+                                          
+                                          tableIndex++;
+                                        }
+
+
                                       }
 
-                                      // Adds services
-                                      int serviceIdx = 0;
-                                      while(serviceIdx < services.length){
-                                        await databaseService.addServices(
-                                          selectedCategory,
-                                          snapshot.data['total-shop-amount']+1,
-                                          serviceIdx,
-                                          services[serviceIdx].gap,
-                                          services[serviceIdx].maxBookings,
-                                          services[serviceIdx].maxBookings == 1?false:true,
-                                        );
-                                        serviceIdx++;
-                                      }
+
 
                                       if (_image1 != null) {
 

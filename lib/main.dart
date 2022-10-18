@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:servnn_client_side/pages/add_staff_member_details.dart';
 import 'package:servnn_client_side/pages/addingservices.dart';
+import 'package:servnn_client_side/pages/adjust_reservation_options.dart';
 import 'package:servnn_client_side/pages/business_category.dart';
 import 'package:servnn_client_side/pages/business_hours.dart';
 import 'package:servnn_client_side/pages/business_hours_details.dart';
@@ -136,6 +137,7 @@ class MyApp extends StatelessWidget {
         '/add-membership': (context) => AddMembership(),
         '/settings': (context) => Settings(),
         '/portfolio': (context) => Portfolio(),
+        '/reservation_options': (context) => ReservationOptions(),
       },
     );
   }

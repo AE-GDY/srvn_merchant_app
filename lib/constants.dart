@@ -51,7 +51,9 @@ List<String> categories = [
   'Spa',
   'Gym',
   'Pet Services',
-  'Car Wash',
+  'Restaurants',
+  'Local Brands',
+
 ];
 
 String selectedCategory = 'Spa';

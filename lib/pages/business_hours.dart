@@ -128,7 +128,12 @@ class _BusinessHoursState extends State<BusinessHours> {
                 ),
                 child: TextButton(
                   onPressed: (){
-                    Navigator.pushNamed(context, '/add-staff-members');
+                    if(selectedCategory != 'Restaurants'){
+                      Navigator.pushNamed(context, '/add-staff-members');
+                    }
+                    else{
+                      Navigator.pushNamed(context, '/profile-ready');
+                    }
                   },
                   child: Text("Continue",style: TextStyle(
                     color: Colors.white,
